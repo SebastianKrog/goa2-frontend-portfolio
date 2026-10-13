@@ -1,0 +1,122 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden auto;
+  display: grid;
+  place-items: center;
+  padding: 40px 24px;
+  isolation: isolate;
+  background:
+    linear-gradient(90deg, rgba(133, 28, 30, 0.18), transparent 36%, transparent 64%, rgba(28, 83, 145, 0.2)),
+    radial-gradient(circle at 50% 20%, rgba(217, 164, 65, 0.11), transparent 28rem),
+    linear-gradient(rgba(8, 13, 24, 0.82), rgba(8, 13, 24, 0.97)),
+    url("/map/forgotten_island.png") center / cover;
+}
+
+.container {
+  width: min(920px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header { text-align: center; }
+
+.eyebrow,
+.choiceKicker {
+  color: var(--accent-gold-bright);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin-top: 9px;
+  color: #f4f1e9;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 6vw, 66px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-shadow: 0 8px 34px rgba(0, 0, 0, 0.7);
+}
+
+.choices {
+  margin-top: 38px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: 18px;
+}
+
+.choice {
+  position: relative;
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(24, 36, 58, 0.94), rgba(10, 16, 29, 0.94));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.choice::after {
+  content: "";
+  position: absolute;
+  inset: auto -20% -55% 25%;
+  height: 190px;
+  border-radius: 50%;
+  background: rgba(30, 136, 229, 0.13);
+  filter: blur(25px);
+}
+
+.choicePrimary {
+  border-color: rgba(217, 164, 65, 0.34);
+  background: linear-gradient(145deg, rgba(56, 43, 27, 0.95), rgba(15, 22, 35, 0.96));
+}
+
+.choicePrimary::after { background: rgba(217, 164, 65, 0.16); }
+
+.choice:hover {
+  transform: translateY(-4px);
+  border-color: rgba(240, 197, 104, 0.58);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.46);
+}
+
+.choiceTitle {
+  margin-top: 12px;
+  color: #fff;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.choiceDesc {
+  max-width: 34rem;
+  margin-top: 12px;
+  color: #aeb7c5;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.choiceAction {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-top: 24px;
+  color: #f5dfad;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .page { padding: 34px 18px; align-items: start; }
+  .choices { grid-template-columns: 1fr; margin-top: 30px; }
+  .choice { min-height: 196px; padding: 23px; }
+}

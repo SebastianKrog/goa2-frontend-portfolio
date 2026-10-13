@@ -1,0 +1,51 @@
+/* Dark translucent "glass" + warm accents — the 3D HUD visual language (M8). */
+
+/* Tokens are global custom properties so both the docks (CSS-module classes
+   below) and the in-scene hand cards can read the shared defense-state colors.
+   :global keeps CSS-modules from scoping the :root selector. */
+:global(:root) {
+  --hud-accent: #ffcf6b;          /* gold */
+  --hud-accent-dim: rgba(255, 207, 107, 0.35);
+  --hud-block: #5fd17a;           /* green — will block */
+  --hud-fail: #d65b5b;            /* red — can't block */
+  --hud-read: #6fc3e0;            /* cyan — primary defense, read it */
+}
+
+.glass {
+  background: linear-gradient(110deg, rgba(11, 13, 18, 0.96), rgba(26, 21, 17, 0.94));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-top: 1px solid rgba(255, 215, 128, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  color: #f2ece0; /* warm off-white */
+}
+
+.accentText { color: var(--hud-accent); }
+
+.parchment {
+  background: linear-gradient(180deg, rgba(60, 48, 32, 0.55), rgba(40, 32, 22, 0.55));
+  border: 1px solid rgba(255, 207, 107, 0.18);
+  border-radius: 10px;
+  color: #f2ece0;
+}
+
+.dangerBtn {
+  background: rgba(120, 36, 36, 0.55);
+  border: 1px solid rgba(214, 91, 91, 0.6);
+  color: #ffd9d9;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.secondaryBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #d8d2c6;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dangerBtn:hover,
+.secondaryBtn:hover {
+  filter: brightness(1.15);
+}

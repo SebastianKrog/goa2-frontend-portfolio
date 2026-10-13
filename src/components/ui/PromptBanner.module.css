@@ -1,0 +1,107 @@
+.banner {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  z-index: 80;
+  width: min(620px, calc(100vw - 32px));
+  min-height: 48px;
+  padding: 8px 10px 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  color: #fff;
+  border: 1px solid var(--phase-resolution);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.85);
+  text-align: left;
+  transform: translateX(-50%);
+  animation: promptIn 180ms ease-out;
+}
+
+.bannerGlass {
+  top: 88px;
+  color: #f2ece0;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-top-color: rgba(255, 215, 128, 0.3);
+  background: linear-gradient(100deg, rgba(12, 14, 19, 0.9), rgba(25, 21, 17, 0.78));
+  box-shadow: 0 16px 46px rgba(0, 0, 0, 0.46), inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+@keyframes promptIn {
+  from { opacity: 0; transform: translate(-50%, -7px); }
+}
+
+.marker {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
+  border: 2px solid #8be6a0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(95, 209, 122, 0.1), 0 0 14px rgba(95, 209, 122, 0.6);
+  animation: markerPulse 1.7s ease-in-out infinite;
+}
+
+@keyframes markerPulse {
+  50% { box-shadow: 0 0 0 7px rgba(95, 209, 122, 0.03), 0 0 18px rgba(95, 209, 122, 0.78); }
+}
+
+.copy {
+  min-width: 0;
+  display: grid;
+  gap: 0;
+  flex: 1;
+}
+
+.copy strong {
+  overflow: hidden;
+  color: #f3eee4;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.actions button {
+  min-height: 32px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.skipBtn {
+  color: #d6d0c5;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.undoBtn {
+  color: #f0c568;
+  border: 1px solid rgba(240, 197, 104, 0.42);
+  background: rgba(240, 197, 104, 0.06);
+}
+
+.undoBtn kbd {
+  margin-left: 3px;
+  opacity: 0.65;
+  font-size: 8px;
+}
+
+.actions button:hover { filter: brightness(1.16); background-color: rgba(255, 255, 255, 0.09); }
+
+@media (max-width: 680px) {
+  .bannerGlass { top: 70px; }
+  .banner { width: calc(100vw - 16px); padding-inline: 10px; }
+  .copy strong { font-size: 12px; white-space: normal; }
+  .undoBtn kbd { display: none; }
+}

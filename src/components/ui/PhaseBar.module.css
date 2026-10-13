@@ -1,0 +1,365 @@
+.bar {
+  position: relative;
+  z-index: 70;
+  min-height: 56px;
+  padding: 7px 14px;
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) minmax(320px, 1.3fr) minmax(190px, 1fr);
+  align-items: center;
+  gap: 16px;
+  color: #eae6dd;
+  border-bottom: 1px solid var(--border-soft);
+  background: linear-gradient(180deg, var(--bg-elevated), var(--bg-secondary));
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.18);
+}
+
+.immersive {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 74px;
+  padding: 10px 18px 14px;
+  border-bottom: 0;
+  background:
+    linear-gradient(180deg, rgba(5, 7, 10, 0.94) 0%, rgba(5, 7, 10, 0.74) 55%, rgba(5, 7, 10, 0) 100%);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.immersive > * { pointer-events: auto; }
+
+.teamPanel {
+  min-width: 0;
+  min-height: 50px;
+  padding: 7px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 13px;
+  background: rgba(12, 14, 19, 0.9);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28), inset 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.redPanel {
+  border-left: 2px solid color-mix(in srgb, var(--team-red) 72%, transparent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--team-red) 11%, rgba(12, 14, 19, 0.76)), rgba(12, 14, 19, 0.68));
+}
+
+.bluePanel {
+  border-right: 2px solid color-mix(in srgb, var(--team-blue) 72%, transparent);
+  background: linear-gradient(270deg, color-mix(in srgb, var(--team-blue) 11%, rgba(12, 14, 19, 0.76)), rgba(12, 14, 19, 0.68));
+}
+
+.teamTop {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.teamIdentity {
+  min-width: 0;
+  display: grid;
+  gap: 0;
+}
+
+.alignRight { text-align: right; }
+
+.teamName {
+  color: #f1ece2;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.05;
+}
+
+.lifeScore {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.lifeCounters {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  transform-origin: center;
+}
+
+.lifeCounter {
+  width: 29px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.42));
+}
+
+.red { color: var(--team-red); }
+.blue { color: var(--team-blue); }
+
+.lifePulse { animation: lifePulse 600ms ease-out; }
+
+@keyframes lifePulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  28% { transform: scale(1.42); filter: brightness(1.9); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.matchPanel {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.matchMeta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #8c8880;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.matchMeta strong {
+  color: #d4cfc5;
+  font-size: 10px;
+}
+
+.phase {
+  position: relative;
+  padding: 4px 10px 4px 17px;
+  color: #eee9df;
+  border: 1px solid color-mix(in srgb, var(--phase-color) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--phase-color) 15%, rgba(12, 14, 19, 0.82));
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+}
+
+.phase::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--phase-color);
+  box-shadow: 0 0 9px var(--phase-color);
+  transform: translateY(-50%);
+}
+
+.status {
+  min-width: min(390px, 100%);
+  min-height: 31px;
+  padding: 5px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #d4cfc6;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(10, 12, 16, 0.9);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #77736c;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.035);
+}
+
+.statusCopy {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.statusCopy strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #f0ebe1;
+  font-family: Georgia, serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusDetail {
+  min-width: 0;
+  overflow: hidden;
+  color: #aaa49a;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusActive {
+  border-color: rgba(246, 200, 111, 0.32);
+  background: linear-gradient(90deg, rgba(246, 200, 111, 0.11), rgba(10, 12, 16, 0.76), rgba(246, 200, 111, 0.11));
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.34), 0 0 24px rgba(232, 177, 66, 0.08);
+}
+
+.statusActive .statusDot {
+  background: #f6c86f;
+  box-shadow: 0 0 9px #f6c86f, 0 0 0 4px rgba(246, 200, 111, 0.1);
+  animation: turnPulse 1.8s ease-in-out infinite;
+}
+
+.statusLocked {
+  border-color: rgba(95, 209, 122, 0.3);
+  background: linear-gradient(90deg, rgba(95, 209, 122, 0.1), rgba(10, 12, 16, 0.78), rgba(95, 209, 122, 0.08));
+}
+
+.statusLocked .statusDot {
+  background: #76d98d;
+  box-shadow: 0 0 9px rgba(95, 209, 122, 0.72), 0 0 0 4px rgba(95, 209, 122, 0.08);
+}
+
+.statusWaiting .statusDot {
+  background: #8d887f;
+  animation: waitingPulse 1.8s ease-in-out infinite;
+}
+
+.statusWinner {
+  border-color: rgba(246, 200, 111, 0.4);
+}
+
+@keyframes turnPulse {
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+
+@keyframes waitingPulse {
+  50% { opacity: 0.45; }
+}
+
+.tieBreaker {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.35));
+  position: relative;
+  z-index: 1;
+  transform: translate(20px, 8px) scale(3.056);
+  transform-origin: center;
+}
+
+.waveLanes {
+  min-height: 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.waveLane {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.waveLaneLabel {
+  color: #9d988e;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.waveCounterStack {
+  min-width: 18px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.waveCounter {
+  width: 23px;
+  height: 23px;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.waveCounter + .waveCounter {
+  margin-left: -4px;
+}
+
+.noWaves {
+  min-width: 22px;
+  color: #77736c;
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1;
+  text-align: center;
+}
+
+.zoneInfo {
+  position: absolute;
+  top: calc(100% + 3px);
+  padding: 3px 8px;
+  color: #98938a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(10, 12, 16, 0.68);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 980px), (max-height: 560px) {
+  /* Team panels size to their content; only the middle column flexes. Fixed
+     fr tracks were narrower than the life counters and pushed the blue panel
+     off screen (the bar, not the page, is what was overflowing). */
+  .bar { grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; padding-inline: 8px; }
+  .teamPanel { min-height: 46px; padding: 6px 9px; }
+  .teamName { white-space: nowrap; }
+  .lifeCounter { width: 23px; }
+  .lifeCounter + .lifeCounter { margin-left: -4px; }
+  .matchMeta { flex-wrap: wrap; row-gap: 2px; }
+  .waveLanes { gap: 8px; }
+  .waveLane { gap: 3px; }
+  .waveCounter { width: 20px; height: 20px; }
+  .waveCounter + .waveCounter { margin-left: -5px; }
+  .status { min-width: min(240px, 100%); }
+}
+
+@media (max-width: 680px), (max-height: 500px) {
+  .bar { min-height: 64px; gap: 6px; }
+  .immersive { padding: 6px 6px 10px; }
+  .teamPanel { min-width: 0; justify-content: center; gap: 5px; border-radius: 10px; }
+  .teamIdentity { display: none; }
+  .lifeCounters { gap: 0; }
+  .lifeCounter { width: clamp(15px, 3.6vw, 21px); }
+  .lifeCounter + .lifeCounter { margin-left: -5px; }
+  .waveLanes { gap: 5px; }
+  .waveLaneLabel { display: none; }
+  .waveCounter { width: clamp(15px, 3.5vw, 19px); height: clamp(15px, 3.5vw, 19px); }
+  .waveCounter + .waveCounter { margin-left: -5px; }
+  .matchMeta > span:not(.phase) { display: none; }
+  .tieBreaker {
+    display: block;
+    transform: translate(8px, 4px) scale(2.667);
+  }
+  .status { min-width: 0; width: 100%; padding-inline: 7px; }
+  .statusCopy strong { font-size: 11px; }
+  .statusDetail { display: none; }
+}

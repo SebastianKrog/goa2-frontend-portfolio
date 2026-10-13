@@ -1,0 +1,14 @@
+.ping {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pingFloat 720ms ease-in-out infinite alternate;
+}
+
+@keyframes pingFloat {
+  from { translate: 0 -2px; }
+  to { translate: 0 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ping { animation: none; }
+}

@@ -1,0 +1,69 @@
+.cheatPanel {
+  background: #2d2d00;
+  border: 1px solid #ffd700;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.header {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.field {
+  margin-bottom: 8px;
+}
+
+.label {
+  display: block;
+  font-size: 11px;
+  color: #ffd700;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.select, .input {
+  width: 100%;
+  padding: 6px 8px;
+  background: #1a1a00;
+  color: #ffd700;
+  border: 1px solid #ffd700;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+.select:focus, .input:focus {
+  outline: none;
+  border-color: #ffed4e;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+.button {
+  width: 100%;
+  padding: 8px;
+  background: linear-gradient(to bottom, #ffd700, #ffed4e);
+  color: #1a1a00;
+  border: none;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.button:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #ffed4e, #fff59d);
+}
+
+.button:disabled {
+  background: #666600;
+  color: #999999;
+  cursor: not-allowed;
+  border: 1px solid #666600;
+}

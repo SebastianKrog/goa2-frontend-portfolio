@@ -1,0 +1,138 @@
+.banner {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  z-index: 90;
+  width: min(560px, calc(100vw - 32px));
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #fff;
+  border: 1px solid #c9a227;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.88);
+  transform: translateX(-50%);
+  animation: overrideIn 180ms ease-out;
+}
+
+.glass {
+  top: 132px;
+  color: #f2ece0;
+  border: 1px solid rgba(255, 215, 128, 0.35);
+  background: linear-gradient(100deg, rgba(12, 14, 19, 0.92), rgba(28, 23, 14, 0.82));
+  box-shadow: 0 16px 46px rgba(0, 0, 0, 0.46), inset 0 1px rgba(255, 255, 255, 0.04);
+}
+
+@keyframes overrideIn {
+  from { opacity: 0; transform: translate(-50%, -7px); }
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e8c96a;
+}
+
+.countdown {
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: #bbb;
+}
+
+.summary {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.reason {
+  font-size: 12px;
+  color: #f0a0a0;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tally {
+  font-size: 12px;
+  color: #cfc7b8;
+}
+
+.noCount {
+  color: #e08a8a;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.approve,
+.reject,
+.cancel {
+  padding: 5px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.approve {
+  background: #2e7d32;
+  color: #fff;
+}
+
+.approve:hover {
+  background: #388e3c;
+}
+
+.reject {
+  background: transparent;
+  border-color: #a94444;
+  color: #f0a0a0;
+}
+
+.reject:hover {
+  background: rgba(169, 68, 68, 0.2);
+}
+
+.cancel {
+  background: transparent;
+  border-color: #666;
+  color: #bbb;
+}
+
+.cancel:hover {
+  border-color: #999;
+  color: #ddd;
+}
+
+.voted {
+  font-size: 12px;
+  color: #9fd7a4;
+}
+
+.applied {
+  border-color: #3f9a48;
+}
+
+.rejected,
+.expired {
+  border-color: #a94444;
+}
+
+.cancelled {
+  border-color: #666;
+}

@@ -1,0 +1,37 @@
+.panel {
+  position: absolute;
+  top: 4.5rem;
+  left: 0.75rem;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-width: min(19rem, calc(100% - 1.5rem));
+  max-height: 45%;
+  overflow: auto;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background: rgba(20, 24, 32, 0.94);
+  color: #fff;
+  font-size: 0.85rem;
+}
+.panel button {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #778394;
+  border-radius: 0.3rem;
+  background: #303e50;
+  color: #fff;
+  cursor: pointer;
+}
+.panel button:hover { background: #455a73; }
+.panel div { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.panel small { color: #c5ceda; }
+
+.inRail {
+  position: static;
+  box-sizing: border-box;
+  width: 19rem;
+  max-width: calc(100vw - 32px);
+  max-height: none;
+  flex-shrink: 0;
+}

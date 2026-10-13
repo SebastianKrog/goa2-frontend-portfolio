@@ -1,0 +1,263 @@
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1200; /* above the docks (1000) */
+  display: grid;
+  place-items: center;
+  padding: clamp(10px, 2.5vw, 32px);
+  /* Plain translucent fill, no backdrop-filter: a full-screen blur composited
+     over the continuously-rendering WebGL canvas re-blurs the whole viewport
+     every frame and tanks FPS. A more opaque fill gives the same focus cheaply. */
+  background:
+    radial-gradient(circle at 50% 48%, rgba(40, 31, 20, 0.2), transparent 42%),
+    rgba(7, 9, 13, 0.9);
+  animation: fadeIn 0.16s ease-out;
+  /* Let drags on empty space reach the canvas so the camera can still be
+     moved while picking; only the cards/footer below opt back into clicks. */
+  pointer-events: none;
+}
+
+.panel {
+  pointer-events: auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Held-Alt "read the board behind me" state: fade out and let clicks pass through. */
+.dimmed {
+  opacity: 0.08;
+  transition: opacity 0.12s ease-out;
+}
+
+.dimmed .panel {
+  pointer-events: none;
+}
+
+.panel {
+  width: min(1180px, 100%);
+  max-height: calc(100dvh - clamp(20px, 5vw, 64px));
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(10, 12, 17, 0.96);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.62);
+}
+
+.header {
+  min-width: 0;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prompt {
+  color: #f4ede1;
+  font-family: Georgia, serif;
+  font-size: clamp(14px, 1.7vw, 19px);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+  max-width: min(820px, calc(100% - 44px));
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.optionCount {
+  min-width: 27px;
+  height: 22px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa49a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.scroller {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: clamp(12px, 2vw, 22px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--choice-width)), var(--choice-width)));
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.cardBtn {
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: var(--choice-width);
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+
+.cardBtn:hover,
+.cardBtn:focus-visible {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow:
+    0 0 0 2px rgba(255, 207, 107, 0.76),
+    0 14px 30px rgba(0, 0, 0, 0.58),
+    0 0 20px rgba(255, 207, 107, 0.18);
+  outline: none;
+}
+
+.cardBtn canvas {
+  display: block;
+}
+
+.spellThumb {
+  width: var(--choice-width);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  border-radius: 11px;
+}
+
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 16, 22, 0.85);
+  border: 1px solid var(--hud-accent-dim);
+  color: var(--hud-accent);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Named choice for a card the viewer's masked view can't resolve (e.g. a
+   non-owner caster picking from a hidden spellbook): a labelled plaque
+   standing in for the card face. */
+.labelBtn {
+  position: relative;
+  width: var(--choice-width);
+  min-height: 92px;
+  padding: 16px;
+  background: rgba(24, 19, 32, 0.92);
+  border: 1px solid var(--hud-accent-dim);
+  border-radius: 14px;
+  color: #f0e8ff;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+
+.labelBtn:hover,
+.labelBtn:focus-visible {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow:
+    0 0 0 2px rgba(255, 207, 107, 0.76),
+    0 14px 30px rgba(0, 0, 0, 0.58),
+    0 0 20px rgba(255, 207, 107, 0.18);
+  outline: none;
+}
+
+.footer {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(8, 10, 14, 0.96);
+}
+
+.footer button {
+  padding: 9px 22px;
+  font-size: 14px;
+}
+
+@media (max-width: 520px) {
+  .backdrop { padding: 6px; }
+  .panel { max-height: calc(100dvh - 12px); border-radius: 12px; }
+  .header { padding: 10px 12px; }
+  .scroller { padding: 10px; }
+  .grid { gap: 9px; }
+}
+
+.peekBtn {
+  min-height: 22px;
+  padding: 0 9px;
+  color: #cfc7ba;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.peekBtn:hover,
+.peekBtn:focus-visible {
+  color: #f4ca76;
+  border-color: rgba(244, 202, 118, 0.34);
+}
+
+/* Board-only state: nothing but the way back, so the scene reads and pans as
+   it normally would. */
+.peekBackdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1200;
+  pointer-events: none;
+}
+
+.returnBtn {
+  position: absolute;
+  top: 88px;
+  left: 50%;
+  min-height: 34px;
+  padding: 7px 14px;
+  color: #e8e2d8;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(10, 12, 17, 0.92);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
+  transform: translateX(-50%);
+  pointer-events: auto;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.returnBtn:hover,
+.returnBtn:focus-visible {
+  color: #f4ca76;
+  border-color: rgba(244, 202, 118, 0.34);
+}

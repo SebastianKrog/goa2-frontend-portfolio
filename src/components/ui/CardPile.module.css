@@ -1,0 +1,49 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: default;
+}
+
+.label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: block;
+}
+
+.tooltipList {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.tooltipList > * {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.tooltipList > *:not(:last-child) {
+  padding-right: 12px;
+  border-right: 1px solid #333;
+}

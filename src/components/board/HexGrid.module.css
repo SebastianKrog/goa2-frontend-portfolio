@@ -1,0 +1,69 @@
+.container {
+  position: absolute;
+  inset: 0;
+  /* The map owns every gesture over it — pinch, drag and double-tap zoom the
+     board instead of the page (see useMapZoom). */
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 18px;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.24));
+}
+
+.remoteCursor {
+  opacity: 0.85;
+  pointer-events: none;
+  transition: transform 120ms linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .remoteCursor {
+    transition: none;
+  }
+}
+
+.heroCard {
+  animation: heroCardFadeSlide 0.25s ease-out forwards;
+}
+
+@keyframes heroCardFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pannable { cursor: grab; }
+.pannable:active { cursor: grabbing; }
+
+.zoomReset {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 6;
+  padding: 5px 10px;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(8, 10, 14, 0.82);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.zoomReset:hover {
+  color: var(--text-primary);
+}

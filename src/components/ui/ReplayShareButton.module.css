@@ -1,0 +1,60 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 13px;
+  color: #f0ebe1;
+  border: 1px solid rgba(246, 200, 111, 0.4);
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(246, 200, 111, 0.16), rgba(10, 12, 16, 0.86));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+}
+
+.button:hover:not(:disabled) {
+  border-color: rgba(246, 200, 111, 0.65);
+  background: linear-gradient(90deg, rgba(246, 200, 111, 0.26), rgba(10, 12, 16, 0.86));
+}
+
+.button:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.icon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fallback {
+  width: min(320px, 100%);
+  padding: 3px 6px;
+  color: #f0ebe1;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 11px;
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 10px;
+  text-align: center;
+}

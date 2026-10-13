@@ -1,0 +1,141 @@
+.page {
+  height: 100%;
+  min-height: 100vh;
+  overflow: auto;
+  padding: 32px 40px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.title {
+  margin: 0 0 20px;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 1200px;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  vertical-align: top;
+}
+
+.table th {
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.resolvedRow {
+  opacity: 0.55;
+}
+
+.titleCell {
+  max-width: 340px;
+}
+
+.reportTitle {
+  font-weight: 600;
+}
+
+.desc {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mono {
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.decision {
+  color: var(--text-secondary);
+}
+
+.open {
+  color: #ffb74d;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.resolved {
+  color: #81c784;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.link {
+  color: var(--zone-mid, #6495ed);
+  font-weight: 600;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.actionBtn {
+  background: transparent;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  border-radius: 5px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  padding: 3px 10px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.actionBtn:hover {
+  color: var(--text-primary);
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.danger:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.hint code {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 4px;
+}

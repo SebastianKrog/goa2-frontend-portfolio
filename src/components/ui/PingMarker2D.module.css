@@ -1,0 +1,46 @@
+.marker {
+  --ping-color: #f6c86f;
+  --ping-offset: 0px;
+  position: absolute;
+  left: calc(50% + var(--ping-offset));
+  bottom: calc(100% - 3px);
+  z-index: 12;
+  display: grid;
+  justify-items: center;
+  color: var(--ping-color);
+  filter: drop-shadow(0 2px 3px #000);
+  pointer-events: none;
+  translate: -50% 0;
+  animation: pingBob 650ms ease-in-out infinite alternate;
+}
+
+.label {
+  padding: 2px 6px;
+  color: #fff;
+  border: 1px solid var(--ping-color);
+  border-radius: 999px;
+  background: rgba(7, 9, 13, 0.92);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.arrow {
+  margin-top: -2px;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 0.8;
+}
+
+.compact .label { font-size: 7px; }
+.compact .arrow { font-size: 16px; }
+
+@keyframes pingBob {
+  from { transform: translateY(-2px); }
+  to { transform: translateY(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker { animation: none; }
+}

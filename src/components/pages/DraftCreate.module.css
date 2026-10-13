@@ -1,0 +1,123 @@
+.page {
+  min-height: 100vh;
+  overflow: auto;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background:
+    linear-gradient(rgba(8, 13, 24, 0.86), rgba(8, 13, 24, 0.97)),
+    url("/map/forgotten_island.png") center / cover;
+}
+
+.container {
+  width: min(560px, 100%);
+  padding: 30px;
+  border: 1px solid rgba(217, 164, 65, 0.23);
+  border-radius: 14px;
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-strong);
+}
+
+.back {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.back:hover { color: #fff; }
+
+.kicker {
+  margin-top: 34px;
+  color: var(--accent-gold-bright);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin-top: 8px;
+  color: #f4f1e9;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 38px;
+  line-height: 1;
+}
+
+.intro {
+  margin-top: 12px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.form {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field { display: flex; flex-direction: column; gap: 8px; }
+
+.fieldLabel {
+  color: #c8d0dc;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.input {
+  width: 100%;
+  padding: 13px 14px;
+  background: rgba(4, 9, 18, 0.72);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.input:focus { border-color: var(--accent-gold); }
+
+.nextSteps {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.nextSteps span { display: flex; align-items: center; gap: 9px; }
+.nextSteps b {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(217, 164, 65, 0.34);
+  border-radius: 50%;
+  color: var(--accent-gold-bright);
+  font-size: 10px;
+}
+
+.submit {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(180deg, #d8a444, #b47d25);
+  color: #171107;
+  border: 0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.15s;
+}
+
+.submit:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.submit:disabled { filter: grayscale(0.7); opacity: 0.42; cursor: not-allowed; transform: none; }
+
+.error { color: #ff8d89; font-size: 13px; text-align: center; }
+
+@media (max-width: 560px) {
+  .page { padding: 0; align-items: stretch; }
+  .container { min-height: 100vh; padding: 24px 20px; border: 0; border-radius: 0; }
+}

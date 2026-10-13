@@ -1,0 +1,159 @@
+.container {
+  padding: 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.name {
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.playerName {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.viewDeckBtn {
+  margin-top: 8px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.viewDeckBtn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.details {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.items {
+  display: inline-flex;
+  gap: 2px;
+  font-size: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.item {
+  font-weight: 500;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.itemIcon {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+}
+
+.handColors {
+  margin-left: 4px;
+  display: inline-flex;
+  gap: 3px;
+}
+
+.handColorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ultimate {
+  position: relative;
+  margin: 4px 0;
+  padding: 6px 8px;
+  font-size: 12px;
+  border-left: 2px solid var(--card-purple);
+  background: rgba(171, 71, 188, 0.11);
+  border-radius: 6px;
+  color: var(--card-purple);
+  cursor: default;
+}
+
+.ultimateStar {
+  margin-right: 4px;
+}
+
+.currentCard {
+  margin-top: 6px;
+  padding: 6px 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.currentLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.runes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.runesLabel {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rune {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.runeIcon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  opacity: 0.75;
+  filter: brightness(1.9);
+}
+
+.runeActive {
+  color: #ffd700;
+  font-weight: 700;
+}
+
+.runeActive .runeIcon {
+  opacity: 1;
+  filter: brightness(2.2) drop-shadow(0 0 1px #ffd700) drop-shadow(0 0 3px #ffd700);
+}

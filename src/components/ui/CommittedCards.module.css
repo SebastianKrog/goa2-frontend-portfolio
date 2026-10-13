@@ -1,0 +1,64 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: fit-content;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-top-color: rgba(246, 200, 111, 0.24);
+  border-radius: 13px;
+  background: rgba(10, 12, 17, 0.9);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.36), inset 0 1px rgba(255, 255, 255, 0.035);
+  pointer-events: auto;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 4px 2px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: #aaa59b;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hidden {
+  padding: 6px 8px;
+}
+
+.columns {
+  display: flex;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slot {
+  display: flex;
+  gap: 3px;
+  padding: 2px;
+  border-left: 2px solid transparent;
+  border-radius: 4px;
+}
+
+.cardPreview {
+  overflow: hidden;
+  border: 1px solid rgba(246, 200, 111, 0.28);
+  border-radius: 13px;
+  background: #0a0c11;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.68), 0 0 30px rgba(246, 200, 111, 0.1);
+}
+
+.cardPreview canvas {
+  display: block;
+}

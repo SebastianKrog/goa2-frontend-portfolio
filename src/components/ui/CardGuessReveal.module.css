@@ -1,0 +1,109 @@
+.tray {
+  min-width: 170px;
+  padding: 9px 11px 11px;
+  color: var(--text-primary);
+  border: 1px solid rgba(246, 200, 111, 0.3);
+  border-radius: 13px;
+  background: rgba(15, 18, 27, 0.95);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.48);
+  animation: trayIn 180ms ease-out;
+}
+
+.immersive {
+  color: #eee8dd;
+  background: rgba(10, 12, 17, 0.94);
+}
+
+@keyframes trayIn {
+  from { opacity: 0; transform: translateY(-8px); }
+}
+
+.heading {
+  margin-bottom: 7px;
+  color: #d4b86d;
+  font-family: Georgia, serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.attempts {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+}
+
+.attempt {
+  width: 126px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.attemptHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  color: #8f8a82;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.attemptHeader strong {
+  overflow: hidden;
+  color: #d8d2c7;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 12px;
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.55);
+  transform-style: preserve-3d;
+}
+
+.facedown { animation: placeCard 220ms ease-out; }
+.revealed { animation: flipCard 420ms ease-out; }
+
+@keyframes placeCard {
+  from { opacity: 0; transform: translateY(-18px) rotate(-3deg); }
+}
+
+@keyframes flipCard {
+  0% { transform: rotateY(90deg) scale(0.96); }
+  100% { transform: rotateY(0deg) scale(1); }
+}
+
+.result,
+.waiting {
+  width: 100%;
+  min-height: 32px;
+  font-size: 9px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.result b {
+  display: block;
+  margin-top: 2px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.correct b { color: #7bd997; }
+.wrong b { color: #ec8b86; }
+.waiting { color: #918b81; }
+
+@media (max-width: 760px) {
+  .tray { padding: 8px; }
+  .attempts { gap: 7px; }
+  .attempt { width: 112px; }
+}
+

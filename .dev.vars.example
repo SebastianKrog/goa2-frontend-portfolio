@@ -1,0 +1,3 @@
+# Local-dev Worker vars (wrangler/@cloudflare/vite-plugin read .dev.vars).
+# Copy to .dev.vars. Points the Worker's /api/* proxy at the local backend.
+BACKEND_ORIGIN=http://localhost:8000

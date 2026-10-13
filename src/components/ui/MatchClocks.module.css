@@ -1,0 +1,31 @@
+.list { width: 100%; display: flex; gap: 4px; overflow: hidden; }
+.right { justify-content: flex-end; }
+.clock {
+  min-width: 0;
+  padding: 3px 5px;
+  display: grid;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.hero { overflow: hidden; color: #b8b2a8; font-size: 8px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.pools { display: flex; gap: 5px; }
+.pools > span { display: flex; align-items: baseline; gap: 2px; white-space: nowrap; }
+.pools small { color: #77736c; font-size: 6px; font-weight: 800; text-transform: uppercase; }
+.pools strong { color: #ddd7cc; font-size: 9px; font-variant-numeric: tabular-nums; }
+.bank strong { color: #f1c46e; }
+.eligible { border-color: rgba(155, 187, 210, 0.26); }
+.running { border-color: rgba(116, 197, 255, 0.38); box-shadow: 0 0 10px rgba(80, 165, 225, 0.09); }
+.warning { border-color: rgba(246, 187, 80, 0.62); background: rgba(126, 79, 15, 0.2); }
+.critical { border-color: rgba(255, 91, 83, 0.82); background: rgba(135, 25, 22, 0.25); animation: clockPulse 1s ease-in-out infinite; }
+.over { border-color: rgba(180, 170, 150, 0.45); }
+.over .bank strong { color: rgba(246, 187, 80, 0.95); }
+@keyframes clockPulse { 50% { box-shadow: 0 0 13px rgba(255, 66, 55, 0.33); } }
+
+@media (max-width: 780px) {
+  .hero, .pools small { display: none; }
+  .clock { padding-inline: 3px; }
+  .pools { gap: 3px; }
+  .pools strong { font-size: 8px; }
+}

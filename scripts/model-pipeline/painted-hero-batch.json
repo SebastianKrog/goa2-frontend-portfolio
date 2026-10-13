@@ -1,0 +1,102 @@
+{
+  "archiveRoot": "GOA COLORIDOS",
+  "missingHeroes": [],
+  "heroes": [
+    { "hero": "arien", "sourceFolder": "Arien Vermelho", "cutoffRatio": 0.05, "rotationY": 0 },
+    { "hero": "bain", "sourceFolder": "Bain vermelho", "status": "pilot-complete" },
+    { "hero": "brogan", "sourceFolder": "Brogan Red", "cutoffRatio": 0.16, "rotationY": 180 },
+    {
+      "hero": "brynn",
+      "sourceArchive": "Brynn.zip",
+      "cutoffRatio": 0.075,
+      "rotationY": 270,
+      "simplifyTriangles": 25000,
+      "simplifyError": 0.05,
+      "maxTriangles": 24000
+    },
+    { "hero": "cutter", "sourceFolder": "Cutter Vermelho", "cutoffRatio": 0.10, "rotationY": 180 },
+    { "hero": "dodger", "sourceFolder": "Dodge Vermelho", "cutoffRatio": 0.06, "rotationY": 0 },
+    { "hero": "emmitt", "sourceFolder": "Emmit Vermelho", "cutoffRatio": 0.08, "rotationY": 0 },
+    { "hero": "garrus", "sourceFolder": "Garrus Vermelho", "cutoffRatio": 0.105, "rotationY": 270 },
+    { "hero": "gydion", "sourceFolder": "Gydeon Vermelho", "cutoffRatio": 0.05, "rotationY": 0 },
+    {
+      "hero": "hanu",
+      "sourceArchive": "Hanu.zip",
+      "cutoffRatio": 0.095,
+      "rotationY": 90,
+      "maxTriangles": 22200
+    },
+    { "hero": "ignatia", "sourceFolder": "Ignatia vermelha", "cutoffRatio": 0.06, "rotationY": 180 },
+    { "hero": "min", "sourceFolder": "Min vermelho", "status": "pilot-complete" },
+    { "hero": "misa", "sourceFolder": "Misa Vermelho", "cutoffRatio": 0.17, "rotationY": 180 },
+    { "hero": "mortimer", "sourceFolder": "Mortimer Vermelho", "cutoffRatio": 0.08, "rotationY": 0 },
+    { "hero": "mrak", "sourceFolder": "Mrak Vermelho", "cutoffRatio": 0.15, "rotationY": 180 },
+    { "hero": "nebkher", "sourceFolder": "Nehbker Vermelho", "cutoffRatio": 0.07, "rotationY": 0 },
+    {
+      "hero": "razzle",
+      "sourceFolder": "Razzle Vermelha",
+      "cutoffRatio": 0.08,
+      "rotationY": 0,
+      "simplifyTriangles": 25000,
+      "simplifyError": 0.05,
+      "maxTriangles": 22500
+    },
+    { "hero": "rowenna", "sourceFolder": "Rowena Vermelho", "cutoffRatio": 0.105, "rotationY": 0 },
+    { "hero": "sabina", "sourceFolder": "Sabina vermelho", "cutoffRatio": 0.09, "rotationY": 0 },
+    {
+      "hero": "silverarrow",
+      "sourceFolder": "Silverarrow Vermelha",
+      "cutoffRatio": 0.14,
+      "rotationY": 270
+    },
+    { "hero": "snorri", "sourceFolder": "Snori Red", "cutoffRatio": 0.10, "rotationY": 0 },
+    { "hero": "swift", "sourceFolder": "Swift vermelho", "cutoffRatio": 0.12, "rotationY": 180 },
+    { "hero": "takahide", "sourceFolder": "Taka vermelho", "cutoffRatio": 0.09, "rotationY": 90 },
+    { "hero": "tali", "sourceFolder": "Tali vermelho", "cutoffRatio": 0.13, "rotationY": 270 },
+    {
+      "hero": "tigerclaw",
+      "sourceFolder": "Tigerclaw vermelho",
+      "cutoffRatio": 0.14,
+      "rotationY": 270
+    },
+    {
+      "hero": "trinkets",
+      "sourceArchive": "Trinkets.zip",
+      "cutoffRatio": 0.035,
+      "rotationY": 0,
+      "simplifyTriangles": 25000,
+      "simplifyError": 0.05,
+      "groundReshape": {
+        "widthRatio": 0.82,
+        "depthRatio": 0.80,
+        "coreRatio": 0.55,
+        "fullStrengthHeightRatio": 0.14,
+        "protectHeightRatio": 0.22
+      },
+      "maxTriangles": 25000
+    },
+    {
+      "hero": "turret_trinkets",
+      "sourceArchive": "Trinkets turret.zip",
+      "cutoffRatio": 0.08,
+      "rotationY": 180,
+      "simplifyTriangles": 25000,
+      "simplifyError": 0.05,
+      "maxTriangles": 24000
+    },
+    { "hero": "ursafar", "sourceFolder": "Ursafar Vermelho", "cutoffRatio": 0.10, "rotationY": 0 },
+    { "hero": "wasp", "sourceFolder": "Wasp Vermelho", "cutoffRatio": 0.10, "rotationY": 0 },
+    { "hero": "whisper", "sourceFolder": "Whisper Vermelho", "cutoffRatio": 0.08, "rotationY": 270 },
+    { "hero": "widget", "sourceFolder": "Widget Vermelho", "cutoffRatio": 0.16, "rotationY": 0 },
+    {
+      "hero": "wuk",
+      "sourceArchive": "wuk.zip",
+      "cutoffRatio": 0.03,
+      "rotationY": 90,
+      "simplifyTriangles": 25000,
+      "simplifyError": 0.05,
+      "maxTriangles": 25000
+    },
+    { "hero": "xargatha", "sourceFolder": "Xargatha Vermelha", "cutoffRatio": 0.08, "rotationY": 270 }
+  ]
+}

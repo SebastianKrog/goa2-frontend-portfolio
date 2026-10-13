@@ -1,0 +1,104 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn {
+  flex: 1;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  transition: transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+}
+
+.confirm {
+  background: #4caf50;
+  color: #fff;
+}
+
+.confirm:hover { background: #388e3c; transform: translateY(-1px); }
+
+.pass {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.pass:hover { background: #333; }
+
+.btn:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 12px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 800;
+}
+
+.waiting {
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: center;
+  padding: 10px 8px;
+  border: 1px dashed var(--border-soft);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  animation: waitingPulse 2s ease-in-out infinite;
+}
+
+.waitingKicker {
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@keyframes waitingPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.empty {
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 8px;
+  text-align: center;
+  border: 1px dashed var(--border-soft);
+  border-radius: 6px;
+}
+
+.hint {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: normal;
+}
+
+.shortcutHint {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 6px;
+  padding: 1px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}

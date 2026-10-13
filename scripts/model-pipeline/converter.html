@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>GoA2 painted hero converter</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/three/build/three.module.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <pre id="status">Starting…</pre>
+    <script type="module">
+      import * as THREE from "three";
+      import { GLTFLoader } from "/three/examples/jsm/loaders/GLTFLoader.js";
+      import { OBJLoader } from "/three/examples/jsm/loaders/OBJLoader.js";
+      import { GLTFExporter } from "/three/examples/jsm/exporters/GLTFExporter.js";
+      import { mergeVertices } from "/three/examples/jsm/utils/BufferGeometryUtils.js";
+
+      const params = new URLSearchParams(location.search);
+      const hero = params.get("hero");
+      const maxTextureSize = Number(params.get("textureSize") || 1024);
+      const rotationYDeg = Number(params.get("rotationY") || 0);
+      const baseFormat = params.get("baseFormat") === "png" ? "png" : "jpeg";
+      const status = document.querySelector("#status");
+
+      const log = (message) => {
+        status.textContent += `\n${message}`;
+        console.log(message);
+      };
+
+      const boxValues = (box) => {
+        const size = box.getSize(new THREE.Vector3());
+        return {
+          min: box.min.toArray(),
+          max: box.max.toArray(),
+          size: size.toArray(),
+        };
+      };
+
+      try {
+        if (!hero) throw new Error("Missing hero name");
+
+        const textureLoader = new THREE.TextureLoader();
+        const [reference, object, baseColor, metallic, normal, roughness] = await Promise.all([
+          new GLTFLoader().loadAsync("/reference.glb"),
+          new OBJLoader().loadAsync("/input/model.obj"),
+          textureLoader.loadAsync("/input/base-color"),
+          textureLoader.loadAsync("/input/metallic"),
+          textureLoader.loadAsync("/input/normal"),
+          textureLoader.loadAsync("/input/roughness"),
+        ]);
+
+        const referenceBox = new THREE.Box3().setFromObject(reference.scene);
+        const sourceBox = new THREE.Box3().setFromObject(object);
+        const referenceHeight = referenceBox.max.y - referenceBox.min.y;
+        const sourceHeight = sourceBox.max.y - sourceBox.min.y;
+        if (!(referenceHeight > 0) || !(sourceHeight > 0)) {
+          throw new Error("Reference and source models must have positive height");
+        }
+        const uniformScale = referenceHeight / sourceHeight;
+
+        baseColor.colorSpace = THREE.SRGBColorSpace;
+        baseColor.name = `${hero}_base_color`;
+        baseColor.userData.mimeType = `image/${baseFormat}`;
+        metallic.name = `${hero}_metallic`;
+        normal.name = `${hero}_normal`;
+        roughness.name = `${hero}_roughness`;
+
+        const material = new THREE.MeshStandardMaterial({
+          name: `${hero}_painted_pbr`,
+          map: baseColor,
+          metalnessMap: metallic,
+          roughnessMap: roughness,
+          normalMap: normal,
+          metalness: 1,
+          roughness: 1,
+        });
+
+        object.name = hero;
+        let triangles = 0;
+        let verticesBefore = 0;
+        let verticesAfter = 0;
+        object.traverse((child) => {
+          if (!child.isMesh) return;
+          verticesBefore += child.geometry.attributes.position.count;
+          child.geometry = mergeVertices(child.geometry, 1e-5);
+          child.geometry.scale(uniformScale, uniformScale, uniformScale);
+          child.geometry.rotateY(THREE.MathUtils.degToRad(rotationYDeg));
+          child.geometry.computeBoundingBox();
+          child.geometry.computeBoundingSphere();
+          verticesAfter += child.geometry.attributes.position.count;
+          const count = child.geometry.index
+            ? child.geometry.index.count
+            : child.geometry.attributes.position.count;
+          triangles += count / 3;
+          child.material = material;
+          child.name = `${hero}_mesh`;
+        });
+
+        const rotatedBox = new THREE.Box3().setFromObject(object);
+        const floorTranslation = referenceBox.min.y - rotatedBox.min.y;
+        object.traverse((child) => {
+          if (!child.isMesh) return;
+          child.geometry.translate(0, floorTranslation, 0);
+          child.geometry.computeBoundingBox();
+          child.geometry.computeBoundingSphere();
+        });
+
+        const finalBox = new THREE.Box3().setFromObject(object);
+        const result = await new GLTFExporter().parseAsync(object, {
+          binary: true,
+          onlyVisible: true,
+          maxTextureSize,
+        });
+
+        const metadata = {
+          hero,
+          byteLength: result.byteLength,
+          textureSize: maxTextureSize,
+          baseFormat,
+          rotationYDeg,
+          uniformScale,
+          floorTranslation,
+          triangles,
+          verticesBefore,
+          verticesAfter,
+          referenceBounds: boxValues(referenceBox),
+          sourceBounds: boxValues(sourceBox),
+          finalBounds: boxValues(finalBox),
+        };
+
+        log(`Uniform scale: ${uniformScale}`);
+        log(`Floor translation: ${floorTranslation}`);
+        log(`Geometry: ${triangles} triangles; ${verticesBefore} → ${verticesAfter} vertices`);
+        log(`Output: ${result.byteLength} bytes`);
+
+        const response = await fetch("/result", {
+          method: "POST",
+          headers: {
+            "Content-Type": "model/gltf-binary",
+            "X-Model-Metadata": encodeURIComponent(JSON.stringify(metadata)),
+          },
+          body: result,
+        });
+        if (!response.ok) throw new Error(`Result upload failed: ${response.status}`);
+
+        window.CONVERSION_RESULT = { ok: true, ...metadata };
+        status.dataset.complete = "true";
+      } catch (error) {
+        console.error(error);
+        status.textContent += `\nFAILED: ${error.stack || error}`;
+        window.CONVERSION_RESULT = { ok: false, error: String(error) };
+        status.dataset.complete = "true";
+        await fetch("/failure", {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: error.stack || String(error),
+        }).catch(() => {});
+      }
+    </script>
+  </body>
+</html>

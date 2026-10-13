@@ -1,0 +1,141 @@
+:root {
+  /* Zone colors */
+  --zone-red-base: #8b1a1a;
+  --zone-red-beach: #cd5c5c;
+  --zone-mid: #d4a017;
+  --zone-blue-beach: #6495ed;
+  --zone-blue-base: #1a3a8b;
+  --zone-jungle: #2e7d32;
+  --zone-river: #1f6f7d;
+  /* Second lane / far half of a lane on two-lane maps, so touching zones of the
+     same family stay legible. */
+  --zone-red-beach-alt: #e28a7b;
+  --zone-blue-beach-alt: #94b9f4;
+  --zone-mid-far: #c2b04a;
+  --zone-jungle-alt: #3f9e5a;
+
+  /* Team colors */
+  --team-red: #ff625c;
+  --team-blue: #58a6ff;
+
+  /* Phase colors */
+  --phase-planning: #49b675;
+  --phase-revelation: #dca84b;
+  --phase-resolution: #dc665c;
+  --phase-cleanup: #8f96a3;
+  --phase-level-up: #a978d1;
+  --phase-game-over: #555d6b;
+
+  /* Card colors */
+  --card-gold: #ffd700;
+  --card-silver: #c0c0c0;
+  --card-red: #e53935;
+  --card-blue: #1e88e5;
+  --card-green: #4caf50;
+  --card-purple: #ab47bc;
+
+  /* UI */
+  --bg-primary: #0c0f15;
+  --bg-secondary: #111620;
+  --bg-panel: #1a2230;
+  --bg-elevated: #171d28;
+  --bg-inset: #090c12;
+  --bg-deep: #06080c;
+  --text-primary: #eeeae2;
+  --text-secondary: #aaa69f;
+  --text-muted: #74777f;
+  --border: #303641;
+  --border-soft: rgba(255, 255, 255, 0.09);
+  --shadow-strong: 0 18px 48px rgba(0, 0, 0, 0.35);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.22);
+  --focus-ring: 0 0 0 3px rgba(100, 181, 246, 0.24);
+  --accent-gold: #caa04a;
+  --accent-gold-bright: #f2cc78;
+  --surface-glass: rgba(10, 13, 18, 0.86);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Avenir Next", Avenir, Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(46, 125, 50, 0.13), transparent 34rem),
+    radial-gradient(circle at bottom right, rgba(100, 149, 237, 0.11), transparent 32rem),
+    var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+::selection {
+  color: #171109;
+  background: var(--accent-gold-bright);
+}
+
+#root {
+  height: 100vh;
+  height: 100dvh;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+select:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

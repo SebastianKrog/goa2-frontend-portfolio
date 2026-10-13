@@ -1,0 +1,7 @@
+@import url("../../../vendor/goa2-translations/fonts/noto-sans-sc/wght.css");
+
+@font-face {
+  font-family: "Modesto Poster";
+  src: url("/cards/fonts/modesto_poster.woff") format("woff");
+  font-display: block;
+}

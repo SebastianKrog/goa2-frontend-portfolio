@@ -1,0 +1,337 @@
+{
+  "tag": "models-v1",
+  "asset": "goa2-models-v1.tar.gz",
+  "sha256": "11c397b039ea1670a3e6a95dafde0317a2bfff69f0805966d184922447e7fd43",
+  "files": [
+    {
+      "path": "model-archive/heroes/arien/arien-original.glb",
+      "size": 5583332,
+      "sha256": "a5229344d46a2c8ad0427ee4c8e2f39c5f5b69635c7bd964e53568056b173d91"
+    },
+    {
+      "path": "model-archive/heroes/bain/bain-original.glb",
+      "size": 5901296,
+      "sha256": "2f14074e64350ef7254acb29a94ff417210c52edcf7fd8fd07cf6aa7ae6dbd6e"
+    },
+    {
+      "path": "model-archive/heroes/brogan/brogan-original.glb",
+      "size": 6655656,
+      "sha256": "7780545f7720899333e0854ff2f87aa5d975d4536d85f323de8e52556583d7d4"
+    },
+    {
+      "path": "model-archive/heroes/brynn/brynn-original.glb",
+      "size": 5300200,
+      "sha256": "6234ce94647f018c91dc5d01173461e41941a26191173a5cbb414e0627ca88e7"
+    },
+    {
+      "path": "model-archive/heroes/cutter/cutter-original.glb",
+      "size": 5750600,
+      "sha256": "a9def4e117861ba5de5c2b88b21c7ef918bfab258a471b3eed3dfabb72f6c1b3"
+    },
+    {
+      "path": "model-archive/heroes/dodger/dodger-original.glb",
+      "size": 12818316,
+      "sha256": "f63cd14fc0a5e3fbce27122d3ccadd2a4142ef5a2b524aa6dd39cf168f805d5d"
+    },
+    {
+      "path": "model-archive/heroes/emmitt/emmitt-original.glb",
+      "size": 6949352,
+      "sha256": "ea632c7b9d39e7a7d10c9e1fbb3e6fddd00de34e100c4bf7fb1ba8600f939110"
+    },
+    {
+      "path": "model-archive/heroes/garrus/garrus-original.glb",
+      "size": 6355352,
+      "sha256": "b6908b9fa010547aced9a25da889a9da803bec09bed4f144c7a076ac76b44639"
+    },
+    {
+      "path": "model-archive/heroes/gydion/gydion-original.glb",
+      "size": 5451176,
+      "sha256": "726aa3a6f7359238118977dda61dbfd1a46fa950eb05f6391a6d4da21624ec81"
+    },
+    {
+      "path": "model-archive/heroes/hanu/hanu-original.glb",
+      "size": 5555800,
+      "sha256": "c4486aaf4eee94aeddc016a087af7f8a483b3d89203ef9107ab0197641f4414d"
+    },
+    {
+      "path": "model-archive/heroes/ignatia/ignatia-original.glb",
+      "size": 5238996,
+      "sha256": "95f0b8539263047be64ff37f0c1fa28f80049b32305260cec433ee87e699e52a"
+    },
+    {
+      "path": "model-archive/heroes/min/min-original.glb",
+      "size": 6052968,
+      "sha256": "81261d788a03bd2d4cd9d701d4e068c9d720980b83c289766929d8cdc21b99cf"
+    },
+    {
+      "path": "model-archive/heroes/misa/misa-original.glb",
+      "size": 6601420,
+      "sha256": "2ed19a566af1e8bbfd83925a93a87a05027a93f4ffae591f3fdd49020704294d"
+    },
+    {
+      "path": "model-archive/heroes/mortimer/mortimer-original.glb",
+      "size": 6243704,
+      "sha256": "b1ed803021e8c218516923f41f21b8da84569c6f61257675fb87bea3640024ac"
+    },
+    {
+      "path": "model-archive/heroes/mrak/mrak-original.glb",
+      "size": 8171020,
+      "sha256": "b504bd2593ed39158779ad8bebe8d83a197a9213c8759fb97beae428dc68f366"
+    },
+    {
+      "path": "model-archive/heroes/nebkher/nebkher-original.glb",
+      "size": 5579964,
+      "sha256": "9f7fc54d56c1329727ffaa2f77628657b7571f183de0bbd7e909661b93ad049f"
+    },
+    {
+      "path": "model-archive/heroes/razzle/razzle-original.glb",
+      "size": 6211932,
+      "sha256": "622650591275071a8ceac41172fd41b0b366aea4961c4c664dbe7b9e169d5e4a"
+    },
+    {
+      "path": "model-archive/heroes/rowenna/rowenna-original.glb",
+      "size": 6878296,
+      "sha256": "8af68a14e2517b05efeb8472c7353b38a5319089fb5c03a7139ff5f6dc127fbb"
+    },
+    {
+      "path": "model-archive/heroes/sabina/sabina-original.glb",
+      "size": 5424416,
+      "sha256": "6493be4ec5feec72089813d22ef1c1b395dc0a3ed4eee3ca8184f101d9c4a842"
+    },
+    {
+      "path": "model-archive/heroes/silverarrow/silverarrow-original.glb",
+      "size": 5348668,
+      "sha256": "228e751669c25a2ceca9c6da484cc27a47289d5e256d246f48631aeed9335a24"
+    },
+    {
+      "path": "model-archive/heroes/snorri/snorri-original.glb",
+      "size": 4871932,
+      "sha256": "9afdfa8b50e4616052f31089dfdc017e91967677eb7cd1699b35d240db01bacd"
+    },
+    {
+      "path": "model-archive/heroes/swift/swift-original.glb",
+      "size": 6260120,
+      "sha256": "85d3553695011fcb23a473201af4ef935ac21ddc59d4b847ca816fcc4a11c54b"
+    },
+    {
+      "path": "model-archive/heroes/takahide/takahide-original.glb",
+      "size": 6126068,
+      "sha256": "e8e1d5a7332dbb99db47a7a8f3a47297f119ad2223b8a0adff772628260a6904"
+    },
+    {
+      "path": "model-archive/heroes/tali/tali-original.glb",
+      "size": 6263176,
+      "sha256": "03608924059502ab7b44ddb1c7be29c44a669835247bd318cb4e53a270f0afff"
+    },
+    {
+      "path": "model-archive/heroes/tigerclaw/tigerclaw-original.glb",
+      "size": 6378880,
+      "sha256": "83a4a1dd5196d6c79ea5c9af5e5a911716de4f924b8ac542e1ffe690f1315e84"
+    },
+    {
+      "path": "model-archive/heroes/trinkets/trinkets-original.glb",
+      "size": 5157092,
+      "sha256": "67cb918d47e72d305d2656f5b6ccc8b681ce714a6c1a899054b40d3287d245d3"
+    },
+    {
+      "path": "model-archive/heroes/turret_trinkets/turret_trinkets-original.glb",
+      "size": 4151720,
+      "sha256": "6b27ff676c5edb357e18b9542cb4fd6e1533d9aabe59196b7937720a9ccb6c4b"
+    },
+    {
+      "path": "model-archive/heroes/ursafar/ursafar-original.glb",
+      "size": 6541488,
+      "sha256": "5c045db76f33f151758dc2b91bdfa3a21fd7ed576d3a43f8c529342e85416e8c"
+    },
+    {
+      "path": "model-archive/heroes/wasp/wasp-original.glb",
+      "size": 5207740,
+      "sha256": "8fa8c667aab5a96fd40cd7abd5d831a92c64cc1985645d4ec5561f5956152ab4"
+    },
+    {
+      "path": "model-archive/heroes/whisper/whisper-original.glb",
+      "size": 6040916,
+      "sha256": "96dd7fb16e94c6f9d92e62333d4316c8dcf729680f1a39cb54f11d5bde7de30e"
+    },
+    {
+      "path": "model-archive/heroes/widget/widget-original.glb",
+      "size": 7134216,
+      "sha256": "ec2e48511e399c26cd45437c601fe8dd8ec1c5bc46a920aaac9f450690a5dcee"
+    },
+    {
+      "path": "model-archive/heroes/wuk/wuk-original.glb",
+      "size": 16792880,
+      "sha256": "32098354d205c2852bb30a85223ac3feac1b067d86e60b5eaf295dba69686b6c"
+    },
+    {
+      "path": "model-archive/heroes/xargatha/xargatha-original.glb",
+      "size": 7068692,
+      "sha256": "32eef3d78e9f795327a1adba81222e1b3e44fe38d7face174667754e062fc38a"
+    },
+    {
+      "path": "public/models/heroes/arien.glb",
+      "size": 4190408,
+      "sha256": "a4df0b3b424f9c036e3e463a7aac83557a3b37aca511fedb19aa12a0df0dab19"
+    },
+    {
+      "path": "public/models/heroes/bain.glb",
+      "size": 4509824,
+      "sha256": "6889a8149a94ba66370521fe43203275aadef0999be2732335119e8a34eedf84"
+    },
+    {
+      "path": "public/models/heroes/brogan.glb",
+      "size": 5618164,
+      "sha256": "6b2b748c21bb62734cef222520c263a0d29c8773c4bad74873c7df6c443ff143"
+    },
+    {
+      "path": "public/models/heroes/brynn.glb",
+      "size": 4972736,
+      "sha256": "cc1e3baa03465c30632c33c883fce03a77e934be50e64f1a5fbe6ad5987424ea"
+    },
+    {
+      "path": "public/models/heroes/cutter.glb",
+      "size": 4298896,
+      "sha256": "80758530cf294faf2e5a1a87565bde63bd15980d1e29bcfa5abb3a819ae66d8f"
+    },
+    {
+      "path": "public/models/heroes/dodger.glb",
+      "size": 5385800,
+      "sha256": "847c3872d0a68de0d463cb6b0b41b0ee6a78b6a485e9fdd769ecc5a2a2d94a26"
+    },
+    {
+      "path": "public/models/heroes/emmitt.glb",
+      "size": 5351476,
+      "sha256": "0ff9ecd025a5a54bb1b97b29d4f35dd6485520b3caadf012909872d4b22f9045"
+    },
+    {
+      "path": "public/models/heroes/garrus.glb",
+      "size": 4926556,
+      "sha256": "85ba66461cf857f351529aa5bb1c389afd384f2ff706a81f3da2aa0a66845d80"
+    },
+    {
+      "path": "public/models/heroes/gydion.glb",
+      "size": 5674632,
+      "sha256": "3bf2a671c8dc398bd82c8774ade6f183a37ef22a1f1ebd2e3ffa2bc5309f3968"
+    },
+    {
+      "path": "public/models/heroes/hanu.glb",
+      "size": 5536732,
+      "sha256": "9ec6e456a469efc0f15e2877cb0e7ea5d70fdfe9325202f1f1acaf911823f371"
+    },
+    {
+      "path": "public/models/heroes/ignatia.glb",
+      "size": 4893296,
+      "sha256": "5ebc933dd543762f56e3a018770596f03016e40e27709cd552b358210f433023"
+    },
+    {
+      "path": "public/models/heroes/min.glb",
+      "size": 5850512,
+      "sha256": "95884e008e78d43e2e9809d0f13c1266bd48f25517895ec2dfbcaf8c009d53e8"
+    },
+    {
+      "path": "public/models/heroes/misa.glb",
+      "size": 5051120,
+      "sha256": "73454baf7ea7b9bb700652cf76775809b8077d236104ab52d1fab9f23142c7bc"
+    },
+    {
+      "path": "public/models/heroes/mortimer.glb",
+      "size": 5111736,
+      "sha256": "b8052efd6efda52535037cb1551307e3f863819e911ef1b7afffe4ec089ea74b"
+    },
+    {
+      "path": "public/models/heroes/mrak.glb",
+      "size": 5316764,
+      "sha256": "b4df293b295d58ebce493760c7d33675bc0a2b80238b3cfeb9634650007187a2"
+    },
+    {
+      "path": "public/models/heroes/nebkher.glb",
+      "size": 5490448,
+      "sha256": "ba5702c0d1c927c426e3e55e78d52c368b61cd8d0f00d826b16c4615f3b2f613"
+    },
+    {
+      "path": "public/models/heroes/razzle.glb",
+      "size": 5490948,
+      "sha256": "3127ef6c7d5a3621074b26fa6a38f7226d485610fde99fc18c15ed183b8b0ea8"
+    },
+    {
+      "path": "public/models/heroes/rowenna.glb",
+      "size": 4644000,
+      "sha256": "edd3b9b46860a0f5257544ac4b02c88a7e5ca218e3e90e0012a58886e4301ce9"
+    },
+    {
+      "path": "public/models/heroes/sabina.glb",
+      "size": 4519848,
+      "sha256": "60dbb20ca8371356df0ba7e81392c6883c38e886aa3415dc7cd4a51e3005930e"
+    },
+    {
+      "path": "public/models/heroes/silverarrow.glb",
+      "size": 5079584,
+      "sha256": "412f867588d9f342de32f82654a1f95233fdfe78c758a919e005f09a335c134c"
+    },
+    {
+      "path": "public/models/heroes/snorri.glb",
+      "size": 4566956,
+      "sha256": "16ffd5def35271d454fbd3e2fe6a195ff27ab959b489360a951171e7efe508b6"
+    },
+    {
+      "path": "public/models/heroes/swift.glb",
+      "size": 4989736,
+      "sha256": "52041c99798ab16fdc6ab5de0f8e47bad9534bdf685d5b1ce5b42606c2ef1d80"
+    },
+    {
+      "path": "public/models/heroes/takahide.glb",
+      "size": 4730644,
+      "sha256": "8614a44dd42e63f617aba3bfc4fa16973aad166a7fd2129343be421f87ad7aa2"
+    },
+    {
+      "path": "public/models/heroes/tali.glb",
+      "size": 5582072,
+      "sha256": "96685e36289bf67e987301366b085ac9e67d2801357a6eb7904869e5b48d4651"
+    },
+    {
+      "path": "public/models/heroes/tigerclaw.glb",
+      "size": 5119100,
+      "sha256": "43e05fe07ac51157f784752b82e58db9767bca2b2e76aeddd058de25f20ba853"
+    },
+    {
+      "path": "public/models/heroes/trinkets.glb",
+      "size": 5847800,
+      "sha256": "4e9162884869dffe5766826894780cf4a6dba7694887ba9a97cff7034fc705d8"
+    },
+    {
+      "path": "public/models/heroes/turret_trinkets.glb",
+      "size": 6160192,
+      "sha256": "a2468704add2a78d395cdc146abe82935eb47d5a86ae6adcfa1cf33b2fc5eaeb"
+    },
+    {
+      "path": "public/models/heroes/ursafar.glb",
+      "size": 5608036,
+      "sha256": "35f2f838298664cbd899a75a44af14cdb245cc2c2526bc9e2175f0d94ee312ff"
+    },
+    {
+      "path": "public/models/heroes/wasp.glb",
+      "size": 5009940,
+      "sha256": "e3dc7508621a9504d9edc17b0cfc539bfa7f7e3c7731d6ce29439f8486e7e9ff"
+    },
+    {
+      "path": "public/models/heroes/whisper.glb",
+      "size": 5596816,
+      "sha256": "2b53eb6789c1932493185ced80fe9f5387968f3333117d97fdde3bd58d5c073a"
+    },
+    {
+      "path": "public/models/heroes/widget.glb",
+      "size": 4773800,
+      "sha256": "8f1dcf027b3a3683364e6d7cb2c9ba836fedec89bb6f5e8bad4aaec883944d19"
+    },
+    {
+      "path": "public/models/heroes/wuk.glb",
+      "size": 5884720,
+      "sha256": "ff26bfec2caab8fe87869d7a9d872f3dbd0c0712045005f41fff6edb18e1a5fe"
+    },
+    {
+      "path": "public/models/heroes/xargatha.glb",
+      "size": 5148920,
+      "sha256": "fd3a126a96fdd8b35737bf55f1b3551889034937b8534f5682950ce999047b2a"
+    }
+  ]
+}

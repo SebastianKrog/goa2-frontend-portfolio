@@ -1,0 +1,273 @@
+.hand {
+  --card-w: 150px;
+  --card-h: 210px;
+  --lifted-card-w: 336px;
+  --lifted-card-h: 469px;
+
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 0px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.hand::before {
+  content: "";
+  position: fixed;
+  left: 50%;
+  bottom: -96px;
+  width: min(920px, 92vw);
+  height: 265px;
+  border-radius: 50% 50% 0 0;
+  background: radial-gradient(ellipse at center bottom, rgba(8, 10, 14, 0.94) 0%, rgba(8, 10, 14, 0.62) 45%, rgba(8, 10, 14, 0) 74%);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.track {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  /* The track's tall padding region must NOT catch pointer events, or it blocks
+     camera control over the lower-centre of the 3D board. Only the card slots
+     below opt back in, so empty space falls through to the canvas. */
+  pointer-events: none;
+  padding-top: 320px;
+}
+
+/* The hit area rotates with the visible card so hovering it always works,
+   no matter how much the fan tilts. */
+.cardSlot {
+  width: var(--card-w);
+  height: var(--card-h);
+  margin: 0 -30px;
+  position: relative;
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translateY(var(--y-arc)) rotate(var(--rot));
+  transform-origin: 50% 100%;
+  border-radius: 12px;
+  outline: none;
+}
+
+.cardSlot:focus-visible {
+  box-shadow: 0 0 0 2px #f6c86f, 0 0 24px rgba(246, 200, 111, 0.65);
+}
+
+.cardVisual {
+  position: absolute;
+  bottom: 0;
+  left: calc((var(--card-w) - var(--lifted-card-w)) / 2);
+  width: var(--lifted-card-w);
+  height: var(--lifted-card-h);
+  transform-origin: 50% 100%;
+  transform: rotate(0deg) translateY(0) scale(var(--rest-scale));
+  transition: transform 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(0 7px 16px rgba(0, 0, 0, 0.58));
+  pointer-events: none;
+}
+
+/* Counter-rotate to be upright, then translate up in screen space, then scale.
+   Because the parent slot is rotated by --rot, applying rotate(-rot) on the
+   inner visual cancels it out so translateY moves straight up on screen. */
+.cardVisual.lifted {
+  transform: rotate(calc(-1 * var(--rot))) translateY(var(--lift-y, -195px)) scale(1);
+  /* Lifted visual sits above the slot's hit area; give it its own so
+     clicking the enlarged card still bubbles to the slot's onClick. */
+  pointer-events: auto;
+}
+
+/* Enlarged-card size + lift are computed in JS (device-pixel aware) and pushed
+   in as --lifted-card-w/h, --lift-y, --lift-scale. The JS clamps the size to the
+   viewport height, so the old per-breakpoint size overrides are gone; only the
+   fan's resting vertical position still needs tweaking on short screens. */
+@media (max-height: 799px) {
+  .track {
+    padding-top: 280px;
+  }
+}
+
+@media (max-height: 719px) {
+  .track {
+    padding-top: 245px;
+  }
+}
+
+.cardVisual.selected {
+  filter: drop-shadow(0 0 24px rgba(255, 215, 100, 0.96)) drop-shadow(0 12px 22px rgba(0, 0, 0, 0.62));
+}
+
+/* SELECT_CARD "pick a card" mode: valid cards glow gold, the rest recede. */
+.cardVisual.selectable {
+  filter: drop-shadow(0 0 16px var(--hud-accent, #ffcf6b));
+  cursor: pointer;
+}
+
+.cardVisual.dimmedCard {
+  filter: brightness(0.45) saturate(0.65);
+}
+
+/* Defense decision: three states on the real cards. */
+.cardVisual.blockCard {
+  filter: drop-shadow(0 0 16px var(--hud-block, #5fd17a));
+  cursor: pointer;
+}
+.cardVisual.primaryCard {
+  filter: drop-shadow(0 0 16px var(--hud-read, #6fc3e0));
+  cursor: pointer;
+}
+.cardVisual.failCard {
+  filter: brightness(0.45) saturate(0.55);
+}
+
+.cardVisual.selected.blockCard,
+.cardVisual.selected.primaryCard,
+.cardVisual.selected.failCard {
+  filter: drop-shadow(0 0 24px rgba(255, 215, 100, 0.96)) drop-shadow(0 12px 22px rgba(0, 0, 0, 0.62));
+}
+
+.defBadge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* The card face always stays at its full lifted resolution and the resting
+   card is produced only by an independent transform. Counter-scale small HUD
+   badges so they retain their original readable size in the resting fan. */
+.cardVisual:not(.lifted) > .badge {
+  top: var(--rest-overlay-offset);
+  left: var(--rest-overlay-offset);
+  transform: scale(var(--lift-scale));
+  transform-origin: top left;
+}
+
+.cardVisual:not(.lifted) > .defBadge,
+.cardVisual:not(.lifted) > .grantedTopRow {
+  top: var(--rest-overlay-offset);
+  transform: translateX(-50%) scale(var(--lift-scale));
+  transform-origin: top center;
+}
+.defBlock { background: var(--hud-block, #5fd17a); color: #0a1a0d; }
+.defPrimary {
+  background: var(--hud-read, #6fc3e0);
+  color: #07222b;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.defFail { background: var(--hud-fail, #d65b5b); color: #2a0808; }
+
+.defIcon {
+  height: 14px;
+  width: auto;
+  vertical-align: middle;
+}
+
+/* "Commit" action on the selected/lifted card. Lives inside .cardVisual so it
+   tracks the card; sits just below it so it doesn't cover the card face. */
+.commitBtn {
+  position: absolute;
+  bottom: -42px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #261b09;
+  background: linear-gradient(180deg, #f9dc91, #c99f43);
+  border: 1px solid #dfba63;
+  border-radius: 9px;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 3;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.62), 0 0 18px rgba(212, 160, 55, 0.26);
+}
+
+.commitBtn:hover {
+  background: linear-gradient(180deg, #fff0a8, #e6c04a);
+}
+
+/* Effect-granted cards (e.g. Rock Solid offered by its active effect): a small
+   gap detaches them from the real hand, a gold halo marks them as effect-driven
+   (matching the on-board active-card glow), and a ribbon spells out the reason.
+   The ribbon and verdict badge sit side by side, centred at the top of the card. */
+.grantedSlot {
+  margin-left: 26px;
+}
+
+.grantedAura {
+  position: absolute;
+  inset: -6px;
+  border-radius: 14px;
+  box-shadow: 0 0 26px 6px rgba(255, 215, 0, 0.55);
+  background: radial-gradient(closest-side, rgba(255, 215, 0, 0.18), transparent 78%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The ribbon + verdict badge group, centred as a single unit at the card top.
+   Children are laid out by flex, so they override their own absolute/centred
+   positioning while inside the row. */
+.grantedTopRow {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 6;
+}
+.grantedTopRow .defBadge {
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
+}
+
+.ribbon {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  color: #2a1d05;
+  background: linear-gradient(180deg, #ffe680, #d4af37);
+  border: 1px solid #8a6508;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.badge {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  background: rgba(9, 11, 15, 0.9);
+  color: #f6d88e;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border: 1px solid rgba(246, 200, 111, 0.25);
+  border-radius: 6px;
+  pointer-events: none;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 760px) {
+  .cardSlot { margin: 0 -40px; }
+  .track { padding-top: 255px; }
+}
