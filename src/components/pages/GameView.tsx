@@ -65,6 +65,13 @@ import { HERO_MODEL_STYLE_KEY, readLegacyHeroModelPreference } from "./heroModel
 import { BOARD_BRIGHTNESS_KEY, readBoardBrightness } from "./boardBrightness";
 import styles from "./GameView.module.css";
 import { useLocalizedHeroNames } from "../../i18n/useLocalizedHeroNames";
+import { readGameLayout, withGameLayout, type GameLayout } from "../mobile/mobileLayout";
+import { useMobileNavigation } from "../mobile/useMobileNavigation";
+import { MobileGameShell } from "../mobile/MobileGameShell";
+import { MobileGamePanels } from "../mobile/MobileGamePanels";
+import { MobileGameHeader } from "../mobile/MobileGameHeader";
+import { MobileGameSettings } from "../mobile/MobileGameSettings";
+import mobileStyles from "../mobile/MobileGameShell.module.css";
 
 const BOARD_INPUT_TYPES = new Set([
   "SELECT_HEX",
@@ -147,12 +154,27 @@ function loadRemotePointersPreference(): boolean {
 }
 
 export function GameView() {
+  const { gameId } = useParams<{ gameId: string }>();
+  const [params] = useSearchParams();
+  // Route changes can reuse this component. Reset all presentation state when
+  // the game or credential changes, while pane/layout changes retain the session.
+  return <GameSession key={JSON.stringify([gameId, params.get("token") ?? ""])} />;
+}
+
+function GameSession() {
   const localizedHeroName = useLocalizedHeroNames();
   const { gameId } = useParams<{ gameId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const token = searchParams.get("token") ?? "";
-  // 3D is the default view; opt back into the legacy 2D board with ?3d=0.
-  const use3D = searchParams.get("3d") !== "0";
+  // Mobile is explicit and always uses 2D, even if an old link includes 3d=1.
+  const layout = readGameLayout(searchParams);
+  const mobile = layout === "mobile";
+  const use3D = layout === "desktop3d";
+  const mobileNavigation = useMobileNavigation(mobile);
+  const changeLayout = (next: GameLayout) => {
+    // Replace rather than push so Back cannot resurrect a stale mobile dialog.
+    setSearchParams(withGameLayout(searchParams, next), { replace: true });
+  };
   const calibrationMode = searchParams.get("calibrate");
   const calibrate = calibrationMode === "1" || calibrationMode === "models";
   const modelCalibrationOnly = calibrationMode === "models";
@@ -795,9 +817,11 @@ export function GameView() {
     return bindings;
   }, [myHero?.hand, isPlanning, canCommit, canUncommit, selectedCardId, commitOrSwap, inputRequest, isMyInput, rollback, cardSelectActive, overridePick, pendingBoardProposal, cancelOverridePick, defenseInfo, stagedDefenseId, stageDefenseCard, handleOptionSelect]);
 
-  useKeyboardShortcuts(keyBindings);
+  useKeyboardShortcuts(keyBindings, !mobile || (mobileNavigation.pane === "board" && !mobileNavigation.dialog));
 
   useEffect(() => {
+    // Mobile panes use ordinary Tab focus traversal.
+    if (mobile) return;
     const onPingKey = (event: KeyboardEvent) => {
       if (event.key !== "Tab") return;
 
@@ -831,7 +855,7 @@ export function GameView() {
     };
     window.addEventListener("keydown", onPingKey, true);
     return () => window.removeEventListener("keydown", onPingKey, true);
-  }, [canPing, hoveredPingTarget, myHeroId, sendPing]);
+  }, [canPing, hoveredPingTarget, myHeroId, sendPing, mobile]);
 
   useEffect(() => {
     document.title = isMyInput ? "YOUR TURN - Guards of Atlantis II" : "Guards of Atlantis II";
@@ -917,8 +941,8 @@ export function GameView() {
   }
 
   return (
-    <div className={`${styles.layout} ${use3D ? styles.immersive : ""}`}>
-      <PhaseBar
+    <div className={mobile ? mobileStyles.layout : `${styles.layout} ${use3D ? styles.immersive : ""}`}>
+      {mobile ? <MobileGameHeader view={view} winner={winner} status={playerStatus} connected={connected} /> : <PhaseBar
         view={view}
         winner={winner}
         isMyInput={!!isMyInput}
@@ -926,7 +950,7 @@ export function GameView() {
         playerStatus={playerStatus}
         immersive={use3D}
         replayShare={gameId && myHeroId ? { gameId, token } : undefined}
-      />
+      />}
 
       {(view.clock?.status === "WAITING_FOR_PLAYERS" ||
         view.clock?.status === "SUSPENDED_FOR_INACTIVITY" ||
@@ -940,7 +964,40 @@ export function GameView() {
         />
       )}
 
-      <div className={styles.main}>
+      <MobileGameShell
+        mobile={mobile}
+        desktopClassName={styles.main}
+        pane={mobileNavigation.pane}
+        onTogglePane={mobileNavigation.togglePane}
+        onClose={mobileNavigation.close}
+        sidebar={!use3D && !mobile && (
+          <Sidebar
+            view={view}
+            myHeroId={myHeroId}
+            heroNames={heroNames}
+            isMyTurn={!!isMyInput}
+            selectedCardId={selectedCardId}
+            onSelectCard={setSelectedCardId}
+            onCommit={commitOrSwap}
+            onGiveGold={cheatsGold}
+            pings={pings}
+            onPingTargetHover={myHeroId ? setHoveredPingTarget : undefined}
+          />
+        )}
+        renderPane={(pane) => (
+          <MobileGamePanels pane={pane} view={view} myHero={myHero} heroNames={heroNames}
+            selectedCardId={selectedCardId} canCommit={canCommit}
+            onSelectCard={setSelectedCardId} onCommit={commitOrSwap}
+            onViewDeck={() => mobileNavigation.showPane("deck")} onClose={mobileNavigation.close}
+            eventLog={eventLog} waitingForNames={waitingForNames} isMyInput={!!isMyInput}
+            settings={(
+              <MobileGameSettings onLayoutChange={changeLayout} showRemotePointers={showRemotePointers}
+                onShowRemotePointersChange={handleShowRemotePointersChange}
+                onOpenDialog={mobileNavigation.openDialog} canFixState={!!myHeroId}
+                onRequestPause={canRequestPause ? requestPause : undefined} />
+            )} />
+        )}
+      >
         <div className={styles.boardArea}>
           {use3D ? (
             <>
@@ -1036,12 +1093,12 @@ export function GameView() {
                 onCollapsedChange={handleResolutionQueueCollapsedChange}
               />
 
-              <EventLog
+              {!mobile && <EventLog
                 eventLog={eventLog}
                 view={view}
                 waitingForNames={waitingForNames}
                 isMyInput={!!isMyInput}
-              />
+              />}
             </>
           )}
 
@@ -1224,21 +1281,7 @@ export function GameView() {
           )}
         </div>
 
-        {!use3D && (
-          <Sidebar
-            view={view}
-            myHeroId={myHeroId}
-            heroNames={heroNames}
-            isMyTurn={!!isMyInput}
-            selectedCardId={selectedCardId}
-            onSelectCard={setSelectedCardId}
-            onCommit={commitOrSwap}
-            onGiveGold={cheatsGold}
-            pings={pings}
-            onPingTargetHover={myHeroId ? setHoveredPingTarget : undefined}
-          />
-        )}
-      </div>
+      </MobileGameShell>
 
       {use3D ? (
         <GameTools
@@ -1254,9 +1297,13 @@ export function GameView() {
           onBrightnessChange={handleBoardBrightnessChange}
           showRemotePointers={showRemotePointers}
           onShowRemotePointersChange={handleShowRemotePointersChange}
+          onMobileView={() => changeLayout("mobile")}
         />
-      ) : (
+      ) : !mobile && (
         <div className={styles.gameToolsRow}>
+          <button type="button" className={styles.bugReportBtn} onClick={() => changeLayout("mobile")}>
+            Mobile UI
+          </button>
           <button
             className={styles.bugReportBtn}
             onClick={() => setShowBugReport(true)}
@@ -1292,19 +1339,22 @@ export function GameView() {
         </div>
       )}
 
-      {showOverridePanel && gameId && view && (
+      {(showOverridePanel || mobileNavigation.dialog === "override") && gameId && view && (
         <OverridePanel
           view={view}
           gameId={gameId}
           token={token}
           myHeroId={myHeroId}
-          onClose={() => setShowOverridePanel(false)}
+          onClose={() => mobile ? mobileNavigation.close() : setShowOverridePanel(false)}
           onPropose={handlePropose}
-          onStartBoardPick={startBoardPick}
+          onStartBoardPick={(pick) => {
+            startBoardPick(pick);
+            if (mobile) mobileNavigation.showPane("board");
+          }}
         />
       )}
 
-      {showShareLinks && gameId && view && (
+      {(showShareLinks || mobileNavigation.dialog === "share") && gameId && view && (
         <ShareLinksPanel
           gameId={gameId}
           origin={window.location.origin}
@@ -1314,13 +1364,17 @@ export function GameView() {
           myHeroId={myHeroId}
           revealedPlayerTokens={revealedPlayerTokens}
           proposalOpen={!!overrideProposal}
-          onRequestPlayerLink={askForPlayerLink}
-          onClose={() => setShowShareLinks(false)}
+          onRequestPlayerLink={(id) => {
+            askForPlayerLink(id);
+            if (mobile) mobileNavigation.close();
+          }}
+          onClose={() => mobile ? mobileNavigation.close() : setShowShareLinks(false)}
         />
       )}
 
-      {showBugReport && gameId && (
-        <BugReportModal gameId={gameId} token={token} onClose={() => setShowBugReport(false)} />
+      {(showBugReport || mobileNavigation.dialog === "report") && gameId && (
+        <BugReportModal gameId={gameId} token={token}
+          onClose={() => mobile ? mobileNavigation.close() : setShowBugReport(false)} />
       )}
 
       {!connected && (

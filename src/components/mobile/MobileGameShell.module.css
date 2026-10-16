@@ -1,0 +1,126 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.header {
+  flex: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px 12px;
+  padding: 8px max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+  font-size: 13px;
+}
+
+.header > :nth-child(3) { text-align: right; }
+.status { grid-column: 1 / -1; overflow-wrap: anywhere; }
+.status small { display: block; color: var(--text-secondary); }
+
+.stage {
+  --mobile-nav-height: calc(52px + env(safe-area-inset-bottom, 0px));
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  isolation: isolate;
+}
+
+.board {
+  position: absolute;
+  inset: 0 0 var(--mobile-nav-height);
+  display: flex;
+  z-index: 0;
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+}
+
+/* Override only the legacy board area's portrait sizing inside this slot. */
+.board > div { flex: 1 1 auto; min-height: 0; height: 100%; }
+
+.pane {
+  position: absolute;
+  inset: 0 0 var(--mobile-nav-height);
+  z-index: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+}
+
+.paneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  gap: 8px;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.paneHeader h1 { font-size: 16px; margin: 0; }
+.paneContent { min-height: 0; overflow: auto; overscroll-behavior: contain; padding: 12px; }
+.stack { display: grid; gap: 12px; }
+
+.navigation {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  height: var(--mobile-nav-height);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: start;
+  gap: 2px;
+  padding: 4px env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  border-top: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.navigation button, .pane button, .pane select {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.navigation button, .paneHeader button, .settings button, .settings select {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.navigation button { font-size: 12px; min-width: 0; }
+.navigation button[aria-pressed="true"] { border-color: #d7ad53; background: #473b23; }
+.settings { display: grid; gap: 12px; }
+.settings label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.settings p { margin: 0; color: var(--text-secondary); }
+.layout :focus-visible { outline: 2px solid #d7ad53; outline-offset: -2px; }
+
+/* Short landscape phones: navigation becomes a rail; board bounds never depend on pane. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .stage { --mobile-rail-width: calc(76px + env(safe-area-inset-right, 0px)); }
+  .board, .pane { inset: 0 var(--mobile-rail-width) 0 0; }
+  .board { padding-right: 0; }
+  .pane { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .navigation {
+    inset: 0 0 0 auto;
+    width: var(--mobile-rail-width);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    border-top: 0;
+    border-left: 1px solid var(--border);
+  }
+  .navigation button { width: 100%; flex: none; }
+  .header { padding-block: 4px; }
+}

@@ -9,6 +9,8 @@ interface Props {
   hero: HeroView;
   teamColor: string;
   onClose: () => void;
+  /** A pane owns navigation, scrolling, and Escape when embedded. */
+  embedded?: boolean;
 }
 
 const TIER_ORDER = ["I", "II", "III"];
@@ -42,7 +44,7 @@ function groupByTier(cards: CardView[]): Record<string, CardView[]> {
   return groups;
 }
 
-export function DeckViewer({ hero, teamColor, onClose }: Props) {
+export function DeckViewer({ hero, teamColor, onClose, embedded = false }: Props) {
   const localizedHeroName = useLocalizedHeroNames();
   const heroName = localizedHeroName(hero.id, hero.name);
   const heroSlug = hero.id.toLowerCase().replace(/^hero_/, "");
@@ -52,6 +54,7 @@ export function DeckViewer({ hero, teamColor, onClose }: Props) {
   const tierGroups = useMemo(() => groupByTier(getDeckCards(hero)), [hero]);
 
   useEffect(() => {
+    if (embedded) return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.stopPropagation();
@@ -60,17 +63,17 @@ export function DeckViewer({ hero, teamColor, onClose }: Props) {
     };
     window.addEventListener("keydown", handleKey, true);
     return () => window.removeEventListener("keydown", handleKey, true);
-  }, [onClose]);
+  }, [onClose, embedded]);
 
   return (
-    <div className={styles.backdrop} onClick={onClose}>
+    <div className={embedded ? styles.embedded : styles.backdrop} onClick={embedded ? undefined : onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <div>
             <span className={styles.heroName} style={{ color: teamColor }}>{heroName}</span>
             <span className={styles.heroTitle}>{hero.title}</span>
           </div>
-          <button className={styles.closeBtn} onClick={onClose}>&times;</button>
+          {!embedded && <button className={styles.closeBtn} onClick={onClose}>&times;</button>}
         </div>
 
         {TIER_ORDER.map((tier) => {

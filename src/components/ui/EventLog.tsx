@@ -12,9 +12,11 @@ interface Props {
   waitingForNames: string[];
   isMyInput: boolean;
   immersive?: boolean;
+  /** Expanded content in a pane, without the board's floating toggle. */
+  embedded?: boolean;
 }
 
-export function EventLog({ eventLog, view, waitingForNames, isMyInput, immersive = false }: Props) {
+export function EventLog({ eventLog, view, waitingForNames, isMyInput, immersive = false, embedded = false }: Props) {
   const localizedHeroName = useLocalizedHeroNames();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [collapsed, setCollapsed] = useState(true);
@@ -47,16 +49,16 @@ export function EventLog({ eventLog, view, waitingForNames, isMyInput, immersive
   };
 
   return (
-    <div className={`${styles.container} ${collapsed ? styles.collapsed : ""} ${immersive ? styles.immersive : ""}`}>
-      <button
+    <div className={embedded ? styles.embedded : `${styles.container} ${collapsed ? styles.collapsed : ""} ${immersive ? styles.immersive : ""}`}>
+      {!embedded && <button
         className={styles.toggle}
         onClick={() => setCollapsed(!collapsed)}
         aria-expanded={!collapsed}
       >
         <span aria-hidden="true">{collapsed ? "☰" : "×"}</span>
         {immersive ? "Battle log" : collapsed ? "Log ▲" : "Log ▼"}
-      </button>
-      {!collapsed && (
+      </button>}
+      {(embedded || !collapsed) && (
         <>
           {!isMyInput && waitingForNames.length > 0 && (
             <div className={styles.status}>Waiting for {waitingForNames.join(", ")}...</div>

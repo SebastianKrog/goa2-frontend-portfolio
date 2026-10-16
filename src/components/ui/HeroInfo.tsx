@@ -23,9 +23,10 @@ interface Props {
   turn?: number;
   pings?: PresentedPing[];
   onPingTargetHover?: (target: PingTarget | null) => void;
+  onViewDeck?: () => void;
 }
 
-export function HeroInfo({ hero, playerName, isYou, turn, pings = [], onPingTargetHover }: Props) {
+export function HeroInfo({ hero, playerName, isYou, turn, pings = [], onPingTargetHover, onViewDeck }: Props) {
   const localizedHeroName = useLocalizedHeroNames();
   const heroName = localizedHeroName(hero.id, hero.name);
   const shownPlayerName = plaqueNameText(playerName);
@@ -87,7 +88,7 @@ export function HeroInfo({ hero, playerName, isYou, turn, pings = [], onPingTarg
         </div>
       )}
       {isYou && (
-        <button className={styles.viewDeckBtn} onClick={() => setShowDeck(true)}>
+        <button className={styles.viewDeckBtn} onClick={onViewDeck ?? (() => setShowDeck(true))}>
           View Deck
         </button>
       )}

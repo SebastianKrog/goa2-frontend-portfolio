@@ -19,6 +19,7 @@ interface Props {
   onRequestPause?: () => void;
   /** Open the spectator/seat link panel. */
   onShareLinks: () => void;
+  onMobileView?: () => void;
   useLegacyHeroModels: boolean;
   onLegacyHeroModelsChange: (enabled: boolean) => void;
   playerBoardLayout: PlayerBoardLayout;
@@ -54,6 +55,7 @@ export function GameTools({
   onFixGameState,
   onRequestPause,
   onShareLinks,
+  onMobileView,
   useLegacyHeroModels,
   onLegacyHeroModelsChange,
   playerBoardLayout,
@@ -129,6 +131,7 @@ export function GameTools({
             <span className={styles.gesture}>1–9</span><span>Select a card from your hand</span>
             <span className={styles.gesture}>U</span><span>Undo when available</span>
           </div>
+          {onMobileView && <button type="button" onClick={onMobileView}>Switch to mobile 2D</button>}
           <p className={styles.helpTip}>Green hexes are valid choices. Gold marks the hero currently resolving.</p>
         </div>
       )}

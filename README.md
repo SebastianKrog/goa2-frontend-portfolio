@@ -44,6 +44,7 @@ src/
     board/      2D board
     board3d/    3D board, HUD, hero models, maps
     draft/      draft lobby
+    mobile/     opt-in mobile 2D shell and navigation
     pages/      routed pages
     ui/         shared panels and overlays
   hooks/        game socket, replay, clocks, reveals
@@ -59,3 +60,15 @@ scripts/        model asset and translation tooling
 npm install
 npm test
 ```
+
+## Mobile UI (opt-in)
+
+Add `ui=mobile` to a game URL to use the mobile 2D shell. Desktop 2D also has a
+Mobile UI button; desktop 3D offers it inside Help. Use mobile Settings to switch
+back. The shell reuses the current game session and keeps the board mounted while
+switching between Heroes, Hand, Deck, Log, and Settings.
+
+M1 implements the shell/navigation; richer mobile presentation and full gameplay
+acceptance follow in later milestones. See [the milestone plan](MOBILE_UI_TODO.md)
+and [integration/validation notes](docs/mobile-ui-integration.md). Asset-dependent
+browser/device validation remains pending.

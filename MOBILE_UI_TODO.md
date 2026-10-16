@@ -1,6 +1,7 @@
 # Mobile UI implementation plan
 
-Status: proposed implementation plan, organized into reviewable milestones.
+Status: M0 groundwork and M1 implemented; M1 browser/device review remains pending.
+See [integration and acceptance notes](docs/mobile-ui-integration.md).
 
 ## Agreed direction
 
@@ -133,34 +134,37 @@ browser checks explicitly; automated milestone acceptance does not replace them.
 Deliverable: a documented feature matrix and the minimum shared interface needed
 by the mobile shell, with no desktop presentation changes.
 
-- [ ] Record a feature/input matrix covering current frontend and released patch
+- [x] Record a feature/input matrix covering current frontend and released patch
   behavior. Distinguish porting work from unfinished items in the patch roadmap.
-- [ ] Capture the asset-independent frontend test baseline.
-- [ ] Extract the minimum shared controller needed by mobile, keeping the desktop
+- [x] Capture the asset-independent frontend test baseline.
+- [x] Extract the minimum shared controller needed by mobile, keeping the desktop
   component tree and behavior stable. Avoid moving unrelated logic merely to
   establish the suggested directory structure.
-- [ ] Define ownership of session state, decision permissions, presentation state,
+- [x] Define ownership of session state, decision permissions, presentation state,
   and actions; identify neutral card helpers needed by later milestones.
 
 Acceptance: desktop tests retain their baseline results, the shared interface is
 typed, and neither presentation needs to create a second socket/session.
+
+Implementation note: the minimum boundary is `GameSession` plus typed presentation
+slots/props. A larger controller-hook extraction is deferred until needed.
 
 ## M1 — Opt-in mobile shell and navigation
 
 Deliverable: an explicitly selectable mobile layout with a persistent board and
 working panes. This milestone establishes composition; core-play acceptance is M2.
 
-- [ ] Add an explicit layout selector, for example `?ui=mobile&3d=0`. Define
+- [x] Add an explicit layout selector, for example `?ui=mobile&3d=0`. Define
   precedence with the existing `3d` parameter and preserve tokens/query parameters
   when switching. Do not add automatic activation yet.
-- [ ] Implement mobile header/status, board area, bottom navigation, and panes for
+- [x] Implement mobile header/status, board area, bottom navigation, and panes for
   Heroes, Hand, Deck, Log, and Settings. Tapping the active pane returns to Board.
-- [ ] Define portrait and short-landscape layouts, viewport units, safe-area
+- [x] Define portrait and short-landscape layouts, viewport units, safe-area
   reservations, scrolling ownership, and overlay stacking. Reuse existing content
   where dedicated mobile content is scheduled later.
-- [ ] Integrate Back/Escape with router-aware pane/dialog state from the outset.
+- [x] Integrate Back/Escape with router-aware pane/dialog state from the outset.
   Closing a viewer must not unexpectedly leave the game.
-- [ ] Preserve board/camera state across pane changes and clear presentation state
+- [x] Preserve board/camera state across pane changes and clear presentation state
   on game/viewer changes.
 
 Acceptance: synthetic interaction tests cover opening, switching, and closing
