@@ -59,3 +59,44 @@ scripts/        model asset and translation tooling
 npm install
 npm test
 ```
+
+## Testing against a local backend
+
+The API and socket integration can be tested without the licensed art or models.
+Start the backend branch you want to test on `127.0.0.1:8765`:
+
+```powershell
+# In the backend checkout, with its Python environment installed
+$env:PYTHONPATH = "src"
+$env:GOA2_SAVE_DIR = "$env:TEMP/goa2-event-history-smoke/games"
+$env:GOA2_LOG_DIR = "$env:TEMP/goa2-event-history-smoke/logs"
+$env:GOA2_REPLAY_DIR = "$env:TEMP/goa2-event-history-smoke/replays"
+.\.venv\Scripts\python.exe -m uvicorn goa2.server.app:create_app --factory --host 127.0.0.1 --port 8765
+```
+
+In this frontend checkout, configure the local Worker proxy and start Vite:
+
+```powershell
+Set-Content .dev.vars "BACKEND_ORIGIN=http://127.0.0.1:8765"
+node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 3000 --strictPort
+```
+
+This runs the dev server without the model-preparation hook. Missing art and
+models still limit the rendered game; this is an API compatibility setup, not
+a complete asset bundle. The frontend is at `http://127.0.0.1:3000`.
+
+In another terminal, run the opt-in live test through the frontend's proxy:
+
+```powershell
+$env:GOA2_INTEGRATION_API_URL = "http://127.0.0.1:3000/api"
+npm run test:backend
+```
+
+The test uses the frontend's real REST client and `GameSocket`, creates a
+disposable game, disconnects one player, and checks event-ID and event-time
+catch-up, pagination, spectator access, and authentication. It is skipped by
+the normal unit suite unless `GOA2_INTEGRATION_API_URL` is set. It can also
+target the backend directly at `http://127.0.0.1:8765`.
+
+The game UI currently logs live broadcasts only. Automatic history fetching
+and deduplication on reconnect still need to be wired into `useGameSocket`.
