@@ -1,6 +1,6 @@
 # Mobile UI implementation plan
 
-Status: M0 groundwork and M1 implemented; M1 browser/device review remains pending.
+Status: M0 and M1 implemented; M1 browser/device review remains pending.
 See [integration and acceptance notes](docs/mobile-ui-integration.md).
 
 ## Agreed direction
@@ -146,8 +146,11 @@ by the mobile shell, with no desktop presentation changes.
 Acceptance: desktop tests retain their baseline results, the shared interface is
 typed, and neither presentation needs to create a second socket/session.
 
-Implementation note: the minimum boundary is `GameSession` plus typed presentation
-slots/props. A larger controller-hook extraction is deferred until needed.
+Implementation: `useGameController` owns one socket session, a renderer-independent
+model, shared selection, and planning coordination. Desktop and mobile hand views
+consume the same model/actions. Pane/modal state, visual preferences, and
+renderer-specific presentation remain outside the controller. See the integration
+notes for the complete feature/input inventory, ownership, and test evidence.
 
 ## M1 — Opt-in mobile shell and navigation
 

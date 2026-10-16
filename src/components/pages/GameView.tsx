@@ -1,7 +1,7 @@
 import { useParams, useSearchParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StartingPositionControls } from "../ui/StartingPositionControls";
-import { useGameSocket } from "../../hooks/useGameSocket";
+import { useGameController } from "../../hooks/useGameController";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import { useAltHeld } from "../../hooks/useAltHeld";
 import { HexGrid } from "../board/HexGrid";
@@ -9,7 +9,6 @@ import { PhaseBar } from "../ui/PhaseBar";
 import { Sidebar } from "../ui/Sidebar";
 import { PromptBanner } from "../ui/PromptBanner";
 import { OptionPicker } from "../ui/OptionPicker";
-import { offBoardUnitOptions } from "../../utils/offBoardUnitChoice";
 import { EventLog } from "../ui/EventLog";
 import { CardGuessReveal } from "../ui/CardGuessReveal";
 import { SpellCastReveal } from "../ui/SpellCastReveal";
@@ -56,11 +55,10 @@ import {
 } from "../../utils/overridePick";
 import { ReadyOverlay } from "../ui/ReadyOverlay";
 import { TEAM_COLORS } from "../../utils/colors";
-import { buildPlayerGameStatus, formatWaitingTitle, isMatchFrozen, resolveWaitingForNames } from "../../utils/gameStatus";
-import { canPingInPhase, pingPresentation } from "../../utils/pings";
+import { pingPresentation } from "../../utils/pings";
 import { useCardGuessReveal } from "../../hooks/useCardGuessReveal";
 import { useSpellCastReveal } from "../../hooks/useSpellCastReveal";
-import type { Hex, HeroView, CardView, PingTarget } from "../../types/game";
+import type { Hex, CardView, PingTarget } from "../../types/game";
 import { HERO_MODEL_STYLE_KEY, readLegacyHeroModelPreference } from "./heroModelPreference";
 import { BOARD_BRIGHTNESS_KEY, readBoardBrightness } from "./boardBrightness";
 import styles from "./GameView.module.css";
@@ -211,45 +209,27 @@ function GameSession() {
     }, { replace: true });
   }, [setSearchParams]);
 
+  const controller = useGameController(gameId ?? "", token);
   const {
-    view,
-    inputRequest,
-    awaitingInput,
-    eventLog,
-    error,
-    connected,
-    closeCode,
-    reconnect,
-    myHeroId,
-    winner,
-    heroNames,
-    commitCard,
-    changeStartingPosition,
-    uncommitCard,
-    finishPlanning,
-    rollback,
-    submitInput,
-    cheatsGold,
-    setReady,
-    pings,
-    pointers,
-    sendPing,
-    sendPointer,
-    sendPointerZone,
-    hidePointer,
-    overrideProposal,
-    overrideResolution,
-    proposeOverride,
-    voteOverride,
-    cancelOverride,
-    revealedPlayerTokens,
-    requestPlayerLink,
-  } = useGameSocket(gameId ?? "", token);
+    view, inputRequest, eventLog, error, connected, closeCode, myHeroId, winner,
+    heroNames, pings, pointers, overrideProposal, overrideResolution, revealedPlayerTokens,
+  } = controller.session;
+  const {
+    myTeam, myHero, isMyInput, isMyUpgradePhase, offBoardUnitChoice, effectiveInputRequest,
+    startingPosition, isPlanning, canPing, canRequestPause, canCommitSecond, canCommit,
+    canUncommit, committedCards, committedCardNames, waitingForNames, waitingTitle, playerStatus,
+  } = controller.model;
+  const {
+    reconnect, changeStartingPosition, finishPlanning, rollback, submitInput, cheatsGold,
+    setReady, sendPing, sendPointer, sendPointerZone, hidePointer, proposeOverride, voteOverride,
+    cancelOverride, requestPlayerLink, commitOrSwap, takeBack,
+  } = controller.actions;
+  const { selectedCardId, setSelectedCardId } = controller.selection;
+  const { lockedNotice } = controller;
   const cardGuessReveal = useCardGuessReveal(view);
   const [spellCastHovered, setSpellCastHovered] = useState(false);
   const spellCastReveal = useSpellCastReveal(eventLog, view, spellCastHovered);
   const [choosingStart, setChoosingStart] = useState(false);
-  const startingPosition = !isMatchFrozen(view) && connected ? view?.starting_position : null;
   const choosingStartingPosition = choosingStart && !!startingPosition;
 
   const mapConfig = useMemo(
@@ -272,7 +252,6 @@ function GameSession() {
     [hidePointer, sendPointer, sendPointerZone],
   );
 
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [showDeck, setShowDeck] = useState(false);
   const [showSpellbook, setShowSpellbook] = useState(false);
   const [showBugReport, setShowBugReport] = useState(false);
@@ -442,51 +421,10 @@ function GameSession() {
     submitInput("SKIP");
   }, [submitInput]);
 
-  const myTeam = useMemo(() => {
-    if (!myHeroId || !view) return null;
-    for (const [teamColor, team] of Object.entries(view.teams)) {
-      if (team.heroes.some(h => h.id === myHeroId)) {
-        return teamColor;
-      }
-    }
-    return null;
-  }, [view, myHeroId]);
-
-  // A pending request survives a pause or a suspension, but answering it is
-  // rejected until the clock runs again — so offer no decision UI at all.
-  const frozen = isMatchFrozen(view);
-
-  const isMyInput = view && !frozen ? (
-    inputRequest?.player_id === myHeroId ||
-    (inputRequest?.player_id?.startsWith('team:') &&
-     inputRequest.player_id === `team:${myTeam}`)
-  ) : false;
-
-  const isMyUpgradePhase = view && !frozen ? (
-    inputRequest?.type === "UPGRADE_PHASE" &&
-    inputRequest?.players &&
-    myHeroId
-  ) : false;
-
   // Direction and reality-split requests are answered on the board (arrows /
   // candidate lines around the actor) in 3D, so they behave like a hex
   // selection: prompt up top, no bottom dock.
   const isOnBoardChoice = use3D && (isDirectionRequest(inputRequest) || isRealitySplitRequest(inputRequest));
-
-  const offBoardUnitChoice = useMemo(
-    () => offBoardUnitOptions(view, inputRequest),
-    [view, inputRequest],
-  );
-
-  // Carries the original prompt and rollback affordance, but routes like an
-  // abstract choice so the existing SELECT_OPTION rendering applies.
-  const effectiveInputRequest = useMemo(
-    () =>
-      offBoardUnitChoice && inputRequest
-        ? { ...inputRequest, type: "SELECT_OPTION" as const, options: offBoardUnitChoice }
-        : inputRequest,
-    [inputRequest, offBoardUnitChoice],
-  );
 
   const needsPicker = view ?
     (isMyInput || isMyUpgradePhase) && inputRequest && (!BOARD_INPUT_TYPES.has(inputRequest.type) || !!offBoardUnitChoice) && !isOnBoardChoice : false;
@@ -506,127 +444,6 @@ function GameSession() {
     inputRequest.type === "SELECT_CARD" ||
     inputRequest.type === "SELECT_CARD_OR_PASS"
   );
-
-  const waitingForNames = useMemo(
-    () => resolveWaitingForNames({
-      view,
-      awaitingInput,
-      myHeroId: myHeroId ?? "",
-      heroName: localizedHeroName,
-    }),
-    [view, awaitingInput, myHeroId, localizedHeroName],
-  );
-  const waitingTitle = formatWaitingTitle(waitingForNames);
-
-  const myHero = useMemo((): HeroView | null => {
-    if (!view || !myHeroId) return null;
-    for (const team of Object.values(view.teams)) {
-      const hero = team.heroes.find(h => h.id === myHeroId);
-      if (hero) return hero;
-    }
-    return null;
-  }, [view, myHeroId]);
-
-  const isPlanning = view?.phase === "PLANNING";
-  const canPing = canPingInPhase(view?.phase);
-  // Emmitt's Alternative Timelines: after the first commit this hero may still
-  // commit a second card or declare done. The backend exposes exactly that
-  // window as `can_commit_second_card` (own view only), so the commit UI stays
-  // live for the second card and we offer a "done" affordance.
-  const canCommitSecond = myHero?.can_commit_second_card ?? false;
-  const planningLocked = !!(
-    myHeroId && view?.clock?.players[myHeroId]?.planning_locked_by_timeout
-  );
-  const canCommit = !planningLocked && (myHero?.current_turn_card === null || canCommitSecond);
-  const committedCards = useMemo(
-    () => [myHero?.extra_turn_card, myHero?.current_turn_card]
-      .filter((card): card is CardView => !!card),
-    [myHero?.extra_turn_card, myHero?.current_turn_card],
-  );
-  const committedCardNames = useMemo(
-    () => committedCards.map((card) => card.name || "Selected card"),
-    [committedCards],
-  );
-  const waitingForCommitNames = useMemo(() => {
-    if (!view || !isPlanning) return [];
-    return Object.values(view.teams)
-      .flatMap((team) => team.heroes)
-      .filter((hero) => hero.id !== myHeroId && hero.current_turn_card === null)
-      .map((hero) => localizedHeroName(hero.id, hero.name));
-  }, [view, isPlanning, myHeroId, localizedHeroName]);
-  const playerStatus = view ? buildPlayerGameStatus({
-    phase: view.phase,
-    isPlayer: !!myHero,
-    isMyInput: !!isMyInput,
-    planningLocked,
-    waitingForNames,
-    committedCardNames,
-    canCommitSecond,
-    waitingForCommitNames,
-  }) : undefined;
-
-  // Planning take-back. canUncommit intentionally keys off current_turn_card:
-  // during Planning it is set from the first commit onward and reverts via
-  // STATE_UPDATE after an uncommit (for Emmitt, to the first card — LIFO).
-  const canUncommit = isPlanning && !planningLocked && !!myHero?.current_turn_card;
-  // Click-to-swap: remember the desired card, send the uncommit, and only
-  // commit once the authoritative view confirms the take-back. Never move
-  // cards optimistically — the uncommit can lose the race with the final
-  // commit (then the ERROR + revelation STATE_UPDATE arrive instead).
-  const [pendingSwapId, setPendingSwapId] = useState<string | null>(null);
-  const [lockedNotice, setLockedNotice] = useState(false);
-  const uncommitInFlightRef = useRef(false);
-
-  const takeBack = useCallback(() => {
-    uncommitInFlightRef.current = true;
-    uncommitCard();
-  }, [uncommitCard]);
-
-  const commitOrSwap = useCallback(
-    (id: string) => {
-      if (canCommit) {
-        commitCard(id);
-      } else if (canUncommit) {
-        setPendingSwapId(id);
-        takeBack();
-      }
-      setSelectedCardId(null);
-    },
-    [canCommit, canUncommit, commitCard, takeBack]
-  );
-
-  // A staged swap survives only within its planning window; leaving planning
-  // discards it before paint instead of in a follow-up effect.
-  if (!isPlanning && pendingSwapId !== null) {
-    setPendingSwapId(null); // locked in / phase moved on
-  }
-
-  // Complete a pending swap when the take-back lands in the view.
-  useEffect(() => {
-    if (!pendingSwapId) return;
-    const inHand = myHero?.hand.some((c) => c.id === pendingSwapId) ?? false;
-    if (canCommit && inHand) {
-      uncommitInFlightRef.current = false;
-      commitCard(pendingSwapId);
-      // Clearing alongside the send is what prevents a second COMMIT_CARD if
-      // another player's STATE_UPDATE re-runs this effect before the committed
-      // card leaves the hand.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPendingSwapId(null);
-    }
-  }, [pendingSwapId, canCommit, myHero, commitCard]);
-
-  // The take-back lost the race with the final commit and was rejected —
-  // surface a friendly notice instead of the raw backend error.
-  useEffect(() => {
-    if (error && uncommitInFlightRef.current) {
-      uncommitInFlightRef.current = false;
-      setPendingSwapId(null);
-      setLockedNotice(true);
-      const id = window.setTimeout(() => setLockedNotice(false), 4000);
-      return () => window.clearTimeout(id);
-    }
-  }, [error]);
 
   // Install the first-gesture context unlock, and arm spawn clacks after a beat
   // so the initial roster popping in stays silent.
@@ -760,7 +577,6 @@ function GameSession() {
   }, [proposeOverride]);
 
   // Only a running timed match can be paused, and only by a seated player.
-  const canRequestPause = !!myHeroId && view?.clock?.status === "RUNNING";
   const requestPause = useCallback(() => {
     proposeOverride({ family: "pause" });
   }, [proposeOverride]);
@@ -815,7 +631,7 @@ function GameSession() {
     }
 
     return bindings;
-  }, [myHero?.hand, isPlanning, canCommit, canUncommit, selectedCardId, commitOrSwap, inputRequest, isMyInput, rollback, cardSelectActive, overridePick, pendingBoardProposal, cancelOverridePick, defenseInfo, stagedDefenseId, stageDefenseCard, handleOptionSelect]);
+  }, [myHero?.hand, isPlanning, canCommit, canUncommit, selectedCardId, setSelectedCardId, commitOrSwap, inputRequest, rollback, cardSelectActive, overridePick, pendingBoardProposal, cancelOverridePick, defenseInfo, stagedDefenseId, stageDefenseCard, handleOptionSelect]);
 
   useKeyboardShortcuts(keyBindings, !mobile || (mobileNavigation.pane === "board" && !mobileNavigation.dialog));
 
@@ -974,6 +790,7 @@ function GameSession() {
           <Sidebar
             view={view}
             myHeroId={myHeroId}
+            model={controller.model}
             heroNames={heroNames}
             isMyTurn={!!isMyInput}
             selectedCardId={selectedCardId}
@@ -985,8 +802,8 @@ function GameSession() {
           />
         )}
         renderPane={(pane) => (
-          <MobileGamePanels pane={pane} view={view} myHero={myHero} heroNames={heroNames}
-            selectedCardId={selectedCardId} canCommit={canCommit}
+          <MobileGamePanels pane={pane} view={view} model={controller.model} heroNames={heroNames}
+            selectedCardId={selectedCardId}
             onSelectCard={setSelectedCardId} onCommit={commitOrSwap}
             onViewDeck={() => mobileNavigation.showPane("deck")} onClose={mobileNavigation.close}
             eventLog={eventLog} waitingForNames={waitingForNames} isMyInput={!!isMyInput}

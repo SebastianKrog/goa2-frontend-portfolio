@@ -1,16 +1,17 @@
 import { CardList } from "./CardList";
 import { HeroInfo } from "./HeroInfo";
 import { CheatPanel } from "./CheatPanel";
-import type { ActivePing, GameView, HeroView, PingTarget } from "../../types/game";
+import type { ActivePing, GameView, PingTarget } from "../../types/game";
+import type { GameControllerModel } from "../../hooks/gameControllerModel";
 import type { HeroNames } from "../../hooks/heroNames";
 import { CHEATS_AVAILABLE } from "../../config/features";
 import styles from "./Sidebar.module.css";
 import { presentPings } from "../../utils/pings";
-import { useLocalizedHeroNames } from "../../i18n/useLocalizedHeroNames";
 
 interface Props {
   view: GameView;
   myHeroId: string | null;
+  model: Pick<GameControllerModel, "myHero" | "canCommit" | "waitingForCommitNames">;
   heroNames?: HeroNames;
   isMyTurn?: boolean;
   selectedCardId: string | null;
@@ -21,26 +22,10 @@ interface Props {
   onPingTargetHover?: (target: PingTarget | null) => void;
 }
 
-export function Sidebar({ view, myHeroId, heroNames = {}, isMyTurn, selectedCardId, onSelectCard, onCommit, onGiveGold, pings = [], onPingTargetHover }: Props) {
-  const localizedHeroName = useLocalizedHeroNames();
-  let myHero: HeroView | null = null;
-  const otherHeroes: HeroView[] = [];
-
-  for (const team of Object.values(view.teams)) {
-    for (const hero of team.heroes) {
-      if (hero.id === myHeroId) {
-        myHero = hero;
-      } else {
-        otherHeroes.push(hero);
-      }
-    }
-  }
-
-  // Also open while Emmitt's Alternative Timelines allows a second card.
-  const canCommit = myHero?.current_turn_card === null || (myHero?.can_commit_second_card ?? false);
-  const waitingForCommitNames = otherHeroes
-    .filter((hero) => hero.current_turn_card === null)
-    .map((hero) => localizedHeroName(hero.id, hero.name));
+export function Sidebar({ view, myHeroId, model, heroNames = {}, isMyTurn, selectedCardId, onSelectCard, onCommit, onGiveGold, pings = [], onPingTargetHover }: Props) {
+  const { myHero, canCommit, waitingForCommitNames } = model;
+  const otherHeroes = Object.values(view.teams).flatMap((team) => team.heroes)
+    .filter((hero) => hero.id !== myHeroId);
   const presentedPings = presentPings(view, pings);
 
   return (

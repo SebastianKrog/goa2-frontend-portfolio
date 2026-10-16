@@ -1,4 +1,4 @@
-# Mobile UI integration and M1 acceptance
+# Mobile UI integration and M0/M1 acceptance
 
 ## Selecting the layout
 
@@ -16,20 +16,44 @@ Switch to mobile 2D inside Help. Mobile Settings offers Desktop 2D and Desktop 3
 Layout changes preserve the token, unrelated query parameters, and URL fragment.
 There is no automatic phone detection or saved layout preference in M1.
 
-## Minimum shared boundary (M0 groundwork)
+## Shared controller boundary (M0)
 
 `GameView` establishes a session identity from game ID and credential. Its
-`GameSession` child owns the single `useGameSocket` instance, existing derived
-permissions/status, game actions, and game-level modal state. A game or credential
-change remounts that child, clearing stale selection, camera, panes, and dialogs.
-Changing layout or pane retains the live session.
+`GameSession` child mounts `useGameController(gameId, token)` once. The controller
+owns the sole `useGameSocket` instance, derives shared game/decision state, and
+coordinates planning commands. A game or credential change remounts the owner,
+clearing stale selection, camera, panes, and dialogs. Changing layout or pane
+retains the live session.
 
-The M1 boundary uses typed presentation props rather than a second controller
-implementation. `MobileGameShell` receives the existing board as a persistent slot
-and typed pane/navigation callbacks. `MobileGamePanels`, `MobileGameHeader`, and
-`MobileGameSettings` receive supplied view data and actions; they do not open
-connections or infer authorization. A larger controller-hook extraction can be
-made incrementally when later milestones require it.
+`src/hooks/useGameController.ts` exports the typed `GameController` interface:
+
+| Group | Ownership |
+| --- | --- |
+| `session` | Player-scoped view/request, connection/error state, events, names, pings/pointers, and override state supplied by the transport. |
+| `model` | Own hero/team, personal/team decision ownership, frozen state, simultaneous upgrade phase, off-board choice adaptation, starting-position availability, planning flags, committed/waiting names, status, ping/pause availability. |
+| `actions` | Existing request-correlated commands and planning coordination: direct commit, take-back, and swap after authoritative acknowledgment. |
+| `selection` | Ephemeral cross-layout hand selection; separate from authoritative server state. |
+| `lockedNotice` | Temporary notice when take-back loses a race with planning completion. |
+
+`src/hooks/gameControllerModel.ts` derives the model without React state, router,
+renderers, or asset access. The controller does not reconstruct hidden data or
+introduce new server rules. Request IDs and selection payloads pass through the
+existing socket hook. A staged swap waits until the server view confirms take-back
+and the requested card is in hand; rejection or leaving planning cancels it.
+
+`GameView` composes the model/actions with presentation state. It owns layout and
+camera preferences, pane/modal visibility, board inspection/override picking,
+reveal/animation/audio display behavior, and renderer-specific decision placement
+(for example, 3D direction arrows versus 2D options). These do not belong to the
+transport or the shared game model.
+
+`MobileGameShell` receives the existing board as a persistent slot and typed
+pane/navigation callbacks. Both desktop `Sidebar` and `MobileGamePanels` consume
+the same own-hero, commit-availability, and waiting-name model. The desktop hand
+therefore also honors the existing timeout lock flag rather than recalculating
+availability separately. The desktop component structure and CSS are retained.
+`MobileGameHeader` and `MobileGameSettings` receive supplied data/actions; none
+of these presentations opens another connection.
 
 `useMobileNavigation` owns mobile pane/dialog history through React Router. Opening
 a pane pushes one history entry; switching panes replaces it. A settings dialog
@@ -52,7 +76,7 @@ fiber access, selector adaptation, and native-button proxies are not ported.
 
 | Area | Existing frontend / released patch | M1 integration | Later acceptance |
 | --- | --- | --- | --- |
-| Session | Shared REST/WebSocket actions and authoritative views | Existing session retained across panes/layout | M2 gameplay/reconnect scenarios |
+| Session | Shared REST/WebSocket actions and authoritative views | One typed controller/session retained across panes/layout | M2 gameplay/reconnect scenarios |
 | Layout/navigation | Legacy board/sidebar; patch mobile panes and Back | Opt-in shell, five panes, active-pane toggle, Back/Escape, portrait/landscape rules | M9 rendered/device fit |
 | Header/status | PhaseBar; patch compact header | Compact text phase, round/turn, team life, player/connection status | M2 clocks and complete gameplay status |
 | Heroes | HeroInfo; patch compact/expanded dashboards | Existing HeroInfo in its own pane; own Deck shortcut uses pane navigation | M3 compact rows, focus, special hero presentation |
@@ -62,11 +86,53 @@ fiber access, selector adaptation, and native-button proxies are not ported.
 | Settings/tools | Existing cursor preference, reporting, sharing, overrides/pause | Basic settings, layout selector, existing tool dialogs | M8 appearance/sound/language/fullscreen parity |
 | Board selections | Hex/unit/token, respawn hex, off-board choices | Existing board and decision routing retained | M2 input matrix and touch reachability |
 | Other decisions | Card/defense, action/option/number, passive, actor, respawn, fast travel and special choices | Existing 2D controls retained | M2 all request flows; M3 mobile decision surfaces |
-| Planning/setup | Ready/start position, commit/take-back, second card/Done | Existing game actions retained; no duplicated rules | M2 full flow acceptance |
+| Planning/setup | Ready/start position, commit/take-back, second card/Done | Shared model and acknowledged swap coordination; both hands consume the same availability | M2 full flow acceptance |
 | Upgrades | Existing single-confirm picker; patch staging | Existing picker retained | M5 batch API, M6 staged tree |
 | Camera | Native pan/pinch/wheel/double tap; patch adds rotation/focus | Native camera retained across panes | M7 rotation, focus and transform composition |
 | Hidden information | Player-scoped/masked frontend data and patch behavior | Supplied views retained; no hidden-card reconstruction | M2/M3 owner/opponent/spectator regressions |
 | Tablet/new markers | Unfinished patch roadmap items | Deferred | Separate follow-up scope |
+
+### Input inventory
+
+This inventories the current contract and rendering paths; it does not claim M2
+gameplay/device acceptance. Personal and team ownership, frozen-state suppression,
+and scoped simultaneous upgrade handling come from the shared controller model.
+Renderer-specific placement remains in `GameView` and existing decision components.
+
+| Input type | Selection / existing rendering path | Mobile port work remaining |
+| --- | --- | --- |
+| `SELECT_HEX` | Hex object from HexGrid; PromptBanner supplies optional Skip/Undo. | M2 touch targeting and prompt reachability. |
+| `SELECT_UNIT` | Unit ID from board, or shared off-board adaptation to options. | M2 both on/off-board flows. |
+| `SELECT_UNIT_OR_TOKEN` | Unit/token ID; same off-board adaptation when all candidates are absent. | M2 token and mixed-candidate flows. |
+| `CHOOSE_RESPAWN_HEX` | Hex object through board targeting. | M2 respawn flow. |
+| `SELECT_CARD` | Card ID; OptionPicker in 2D, CardSelectOverlay in 3D. | M2 touch inspection/selection; M3 richer surface. |
+| `SELECT_CARD_OR_PASS` | Offered card ID or `PASS`; OptionPicker in 2D, hand plus DefenseDock in 3D. | M2 defense and granted out-of-hand cards; M3 presentation. |
+| `CHOOSE_ACTION` | Option ID; OptionPicker in 2D, PickerDock in 3D. | M2 all action choices. |
+| `SELECT_OPTION` | Option ID and optional preview metadata; same picker routing. | M2 special choices and previews. |
+| `SELECT_NUMBER` | Current pickers submit option IDs, stringifying numeric fallbacks; 3D specializes direction/split-line requests onto the board. | M2 validate each payload flow and special choices. |
+| `CONFIRM_PASSIVE` | Supplied option or `YES`/`NO` fallback. | M2 optional/mandatory passive handling. |
+| `CHOOSE_ACTOR` | Hero ID from `player_ids`. | M2 actor/tie choices. |
+| `CHOOSE_RESPAWN` | Supplied option or current `YES`/`NO` fallback. | M2 skip/respawn flow. |
+| `UPGRADE_PHASE` | `{hero_id, card_id}` from the viewer's scoped offer, with per-choice confirmation; shared by both renderers. | M2 baseline flow; M5/M6 batch/staged tree. |
+
+`SKIP` is the string sentinel for optional selections. The controller forwards
+selections (including numeric values, hexes, and structured upgrades) unchanged;
+the existing socket hook echoes the current opaque request ID. No aliasing of
+legacy or unknown request names is added by M0.
+
+The backend enum also retains `NONE`, `ACTION_CHOICE`, `MOVEMENT_HEX`,
+`DEFENSE_CARD`, `TIE_BREAKER`, `SELECT_ALLY`, `FAST_TRAVEL_DESTINATION`,
+`SELECT_ENEMY`, and `UPGRADE_CHOICE` as legacy names. The current OptionPicker has
+no dedicated branches for them. The frontend's abstract-route list additionally
+contains `FAST_TRAVEL`, also without a dedicated 2D option-normalization branch.
+These are compatibility gaps to assess in M2 against actual server emissions;
+they are not silently counted as supported. Direction and reality-split prompts
+are specialized `SELECT_NUMBER` requests, not separate input types.
+
+The patch roadmap's new spell/marker area, Gydion public cast-spell counter and
+Deck spell improvements, alternative navigation modes, tablet split panels, and
+complete offline event backfill remain deferred. Existing spell data and released
+patch behavior must not be confused with those unimplemented designs.
 
 Neutral helpers for later reuse include card stats/icons, localized text, hero
 status, upgrade offer identity, and deck-tree calculations. `CardCanvas` and painter
@@ -76,8 +142,18 @@ Moving them to a neutral directory is deferred until the mobile card work needs 
 ## Verification
 
 Baseline before implementation: **51 test files / 332 tests passed**, and
-`npx tsc -b --pretty false` passed. M1 adds **16 tests** across layout selection,
-GameView integration, and CSS declaration checks.
+`npx tsc -b --pretty false` passed. The M1 branch baseline was rechecked before M0
+extraction: **54 files / 348 tests passed**. The completed M0/M1 branch has
+**56 files / 369 tests passed**: the original 16 M1 tests plus 20 controller/model
+tests and one shared desktop/mobile timeout-availability regression.
+
+Controller tests substitute only the GameSocket network boundary, running the
+real socket hook and controller. They verify one transport across presentation
+changes, disconnect/timer cleanup, personal/team ownership, frozen and simultaneous
+decisions, scoped data, off-board request adaptation, two-card ordering/timeout
+flags, direct commit, acknowledged swap without duplicate commits, missing-card and
+phase-change cancellation, rejection notice expiry, and fresh request-ID echo with
+unchanged payloads. They do not require a backend process or licensed assets.
 
 The integration tests run in jsdom with synthetic game data, a substituted socket
 transport, and an asset-free CardCanvas substitute. They exercise production
@@ -100,13 +176,14 @@ Commands:
 ```sh
 npm test
 npx tsc -b --pretty false
-npx eslint src/components/mobile src/components/ui/DeckViewer.tsx src/components/ui/EventLog.tsx src/components/ui/HeroInfo.tsx src/components/board3d/hud/GameTools.tsx
+npx eslint src/hooks/useGameController.ts src/hooks/gameControllerModel.ts src/hooks/gameControllerModel.test.ts src/hooks/useGameController.test.tsx src/hooks/__fixtures__/gameController.ts src/components/pages/GameView.tsx src/components/ui/Sidebar.tsx src/components/mobile src/components/ui/DeckViewer.tsx src/components/ui/EventLog.tsx src/components/ui/HeroInfo.tsx src/components/board3d/hud/GameTools.tsx
 ```
 
-The existing `GameView.tsx` baseline has an effect-state lint error and an
-unnecessary hook dependency warning, reproduced against the plan branch. M1 does
-not change that code or suppress the findings. The new/other touched components
-pass targeted lint.
+Targeted lint passes for the controller/model, their tests, GameView, and changed
+presentation components. The original GameView effect-state error is resolved by
+invalidating rejected planning commands during the controller's render-time state
+transition. The prior unnecessary dependency is removed, and the shared selection
+setter is now an explicit dependency of keyboard-binding memoization.
 
 Browser/device acceptance is pending: actual portrait/landscape geometry, browser
 chrome and keyboard resizing, safe areas, fonts/artwork, card overflow, native

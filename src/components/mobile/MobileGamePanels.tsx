@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import type { CardView, GameView, HeroView } from "../../types/game";
+import type { CardView, GameView } from "../../types/game";
+import type { GameControllerModel } from "../../hooks/gameControllerModel";
 import type { HeroNames } from "../../hooks/heroNames";
 import type { TimestampedEvent } from "../../hooks/useGameSocket";
-import { useLocalizedHeroNames } from "../../i18n/useLocalizedHeroNames";
 import { TEAM_COLORS } from "../../utils/colors";
 import { HeroInfo } from "../ui/HeroInfo";
 import { CardList } from "../ui/CardList";
@@ -14,10 +14,9 @@ import styles from "./MobileGameShell.module.css";
 interface Props {
   pane: Exclude<MobilePane, "board">;
   view: GameView;
-  myHero: HeroView | null;
+  model: Pick<GameControllerModel, "myHero" | "canCommit" | "waitingForCommitNames">;
   heroNames: HeroNames;
   selectedCardId: string | null;
-  canCommit: boolean;
   onSelectCard: (id: CardView["id"]) => void;
   onCommit: (id: CardView["id"]) => void;
   onViewDeck: () => void;
@@ -30,8 +29,7 @@ interface Props {
 
 /** Reuse existing content for M1; richer mobile presentation follows in M2–M4. */
 export function MobileGamePanels(props: Props) {
-  const localizedHeroName = useLocalizedHeroNames();
-  const { pane, view, myHero } = props;
+  const { pane, view, model: { myHero, canCommit, waitingForCommitNames } } = props;
   const heroes = Object.values(view.teams).flatMap((team) => team.heroes);
   switch (pane) {
     case "heroes":
@@ -41,10 +39,9 @@ export function MobileGamePanels(props: Props) {
           onViewDeck={props.onViewDeck} />
       ))}</div>;
     case "hand":
-      return myHero ? <CardList cards={myHero.hand} phase={view.phase} canCommit={props.canCommit}
+      return myHero ? <CardList cards={myHero.hand} phase={view.phase} canCommit={canCommit}
         selectedId={props.selectedCardId} onSelectCard={props.onSelectCard} onCommit={props.onCommit}
-        waitingForCommitNames={heroes.filter((hero) => hero.id !== myHero.id && !hero.current_turn_card)
-          .map((hero) => localizedHeroName(hero.id, hero.name))} />
+        waitingForCommitNames={waitingForCommitNames} />
         : <p>Spectators do not have a hand.</p>;
     case "deck":
       return myHero && Array.isArray(myHero.deck)

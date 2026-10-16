@@ -5,6 +5,7 @@ import { BrowserRouter, createMemoryRouter, Route, RouterProvider, Routes } from
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CardView, GameView as GameViewData, HeroView } from "../../types/game";
 import { GameView } from "../pages/GameView";
+import { clock } from "../../hooks/__fixtures__/gameController";
 
 const harness = vi.hoisted(() => ({
   sessions: 0,
@@ -241,6 +242,19 @@ describe("mobile shell in GameView", () => {
     expect(tab.defaultPrevented).toBe(false);
     await act(async () => window.dispatchEvent(new KeyboardEvent("keydown", { key: "1", bubbles: true })));
     expect(button("Commit Enter").disabled).toBe(true);
+  });
+
+  it("uses the same timeout-aware hand availability on desktop and mobile", async () => {
+    const timedClock = clock("RUNNING", true);
+    timedClock.players.hero_test = timedClock.players.hero_own;
+    delete timedClock.players.hero_own;
+    harness.view = { ...harness.view!, clock: timedClock };
+    await mount("/game/one?token=seat&3d=0");
+    expect([...host.querySelectorAll("button")].some((item) => item.textContent?.includes("Commit"))).toBe(false);
+    await click("Mobile UI");
+    await click("Hand");
+    expect([...host.querySelectorAll("button")].some((item) => item.textContent?.includes("Commit"))).toBe(false);
+    expect(harness.sessions).toBe(1);
   });
 
   it("returns to desktop without reconnecting and preserves unrelated query parameters", async () => {

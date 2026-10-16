@@ -68,7 +68,8 @@ Mobile UI button; desktop 3D offers it inside Help. Use mobile Settings to switc
 back. The shell reuses the current game session and keeps the board mounted while
 switching between Heroes, Hand, Deck, Log, and Settings.
 
-M1 implements the shell/navigation; richer mobile presentation and full gameplay
-acceptance follow in later milestones. See [the milestone plan](MOBILE_UI_TODO.md)
+M0 supplies the shared typed game controller; M1 implements the shell/navigation.
+Richer mobile presentation and full gameplay acceptance follow in later milestones.
+See [the milestone plan](MOBILE_UI_TODO.md)
 and [integration/validation notes](docs/mobile-ui-integration.md). Asset-dependent
 browser/device validation remains pending.
