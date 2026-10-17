@@ -73,6 +73,10 @@ are tested, but their rendered fit still needs browser validation with assets.
 
 The released userscript is a behavior reference. Its DOM observers, private React
 fiber access, selector adaptation, and native-button proxies are not ported.
+The parity target is [v1.3.0 (`ad1eed5`)](https://github.com/SebastianKrog/goa2-mobile-2d-patch/commit/ad1eed5427b91b8daaebb56c4ceafda01db5f7de).
+The [roadmap](../MOBILE_UI_TODO.md#release-reconciliation-v113-to-v130)
+accounts for all 13 changelog entries since the original v1.1.3 baseline.
+These additions are planned work beyond the implemented M0/M1 foundation.
 
 | Area | Existing frontend / released patch | M1 integration | Later acceptance |
 | --- | --- | --- | --- |
@@ -81,16 +85,19 @@ fiber access, selector adaptation, and native-button proxies are not ported.
 | Header/status | PhaseBar; patch compact header | Compact text phase, round/turn, team life, player/connection status | M2 clocks and complete gameplay status |
 | Heroes | HeroInfo; patch compact/expanded dashboards | Existing HeroInfo in its own pane; own Deck shortcut uses pane navigation | M3 compact rows, focus, special hero presentation |
 | Hand | CardList; patch compact rows and text inspection | Existing CardList in Hand with shared callbacks | M2 touch inspection/core play; M3 richer cards |
-| Deck | Painted DeckViewer; patch Tree/List/Grid and plans | Existing DeckViewer embedded in pane | M4 trees, sorting, saved plans |
+| Deck | Painted DeckViewer; patch Tree/List/Grid, spells and plans | Existing DeckViewer embedded in pane | M4 trees, shared spell sorting/grouping, saved plans |
+| Indicators | Patch shared Bounty/Poison, Gydion counter and compact rune indicators | Existing HeroInfo retained | M3 hero/piece markers, counters, row geometry; M9 asset acceptance |
+| Spells | Patch public cast list, owner Spellbook, Tiny/Large/Image and embedded references | Existing card/deck viewers retained | M3 spell views/choices and embedded rows; M4 Deck integration; M8 preferences/nested navigation |
+| Snorri | Patch fixed rune columns, confirmed progress and hero history labels | Existing decision controls retained | M3 presentation/recovery; M5 typed contract; M6 batch submission |
 | Log | EventLog; patch saved Events/Decisions | Existing live EventLog embedded and expanded | M8 decision history and persistence |
 | Settings/tools | Existing cursor preference, reporting, sharing, overrides/pause | Basic settings, layout selector, existing tool dialogs | M8 appearance/sound/language/fullscreen parity |
 | Board selections | Hex/unit/token, respawn hex, off-board choices | Existing board and decision routing retained | M2 input matrix and touch reachability |
-| Other decisions | Card/defense, action/option/number, passive, actor, respawn, fast travel and special choices | Existing 2D controls retained | M2 all request flows; M3 mobile decision surfaces |
+| Other decisions | Card/defense, action/option/number, passive, actor, respawn, fast travel and special choices | Existing 2D controls retained | M2 all request flows; M3 spell previews, Small gold choices, icons and mobile decision surfaces |
 | Planning/setup | Ready/start position, commit/take-back, second card/Done | Shared model and acknowledged swap coordination; both hands consume the same availability | M2 full flow acceptance |
-| Upgrades | Existing single-confirm picker; patch staging | Existing picker retained | M5 batch API, M6 staged tree |
+| Upgrades | Existing single-confirm picker; patch staging | Existing picker retained | M5 backend contract/frontend adapters, M6 staged tree |
 | Camera | Native pan/pinch/wheel/double tap; patch adds rotation/focus | Native camera retained across panes | M7 rotation, focus and transform composition |
 | Hidden information | Player-scoped/masked frontend data and patch behavior | Supplied views retained; no hidden-card reconstruction | M2/M3 owner/opponent/spectator regressions |
-| Tablet/new markers | Unfinished patch roadmap items | Deferred | Separate follow-up scope |
+| Tablet/alternative navigation | Unfinished patch roadmap items | Deferred | Separate follow-up scope |
 
 ### Input inventory
 
@@ -108,12 +115,12 @@ Renderer-specific placement remains in `GameView` and existing decision componen
 | `SELECT_CARD` | Card ID; OptionPicker in 2D, CardSelectOverlay in 3D. | M2 touch inspection/selection; M3 richer surface. |
 | `SELECT_CARD_OR_PASS` | Offered card ID or `PASS`; OptionPicker in 2D, hand plus DefenseDock in 3D. | M2 defense and granted out-of-hand cards; M3 presentation. |
 | `CHOOSE_ACTION` | Option ID; OptionPicker in 2D, PickerDock in 3D. | M2 all action choices. |
-| `SELECT_OPTION` | Option ID and optional preview metadata; same picker routing. | M2 special choices and previews. |
+| `SELECT_OPTION` | Option ID and optional preview metadata; same picker routing. | M2 special choices/previews; M3 rune columns; M5/M6 typed ordered rune arrays and capability-gated submission. |
 | `SELECT_NUMBER` | Current pickers submit option IDs, stringifying numeric fallbacks; 3D specializes direction/split-line requests onto the board. | M2 validate each payload flow and special choices. |
 | `CONFIRM_PASSIVE` | Supplied option or `YES`/`NO` fallback. | M2 optional/mandatory passive handling. |
 | `CHOOSE_ACTOR` | Hero ID from `player_ids`. | M2 actor/tie choices. |
 | `CHOOSE_RESPAWN` | Supplied option or current `YES`/`NO` fallback. | M2 skip/respawn flow. |
-| `UPGRADE_PHASE` | `{hero_id, card_id}` from the viewer's scoped offer, with per-choice confirmation; shared by both renderers. | M2 baseline flow; M5/M6 batch/staged tree. |
+| `UPGRADE_PHASE` | `{hero_id, card_id}` from the viewer's scoped offer, with per-choice confirmation; shared by both renderers. | M2 baseline flow; M5 typed `{hero_id, card_ids}` adapter; M6 staged tree. |
 
 `SKIP` is the string sentinel for optional selections. The controller forwards
 selections (including numeric values, hexes, and structured upgrades) unchanged;
@@ -129,10 +136,15 @@ These are compatibility gaps to assess in M2 against actual server emissions;
 they are not silently counted as supported. Direction and reality-split prompts
 are specialized `SELECT_NUMBER` requests, not separate input types.
 
-The patch roadmap's new spell/marker area, Gydion public cast-spell counter and
-Deck spell improvements, alternative navigation modes, tablet split panels, and
-complete offline event backfill remain deferred. Existing spell data and released
-patch behavior must not be confused with those unimplemented designs.
+Backend batch support exists on `feat/batch-upgrades-and-runes` at `740ec5b`;
+frontend array payloads and capability/count metadata remain M5 work. This does
+not establish deployment or completion of the staged mobile UI. Preserve current
+single-choice flows and use the documented one-or-completing-batch restrictions.
+
+Released v1.2/v1.3 spell/marker and Snorri features are porting scope in M3–M8.
+Only additional unspecified hero designs, alternative navigation modes, tablet
+split panels, and complete offline event backfill remain deferred. The patch's
+older roadmap wording must not override its shipped source and tests.
 
 Neutral helpers for later reuse include card stats/icons, localized text, hero
 status, upgrade offer identity, and deck-tree calculations. `CardCanvas` and painter

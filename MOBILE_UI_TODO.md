@@ -2,6 +2,11 @@
 
 Status: M0 and M1 implemented; M1 browser/device review remains pending.
 See [integration and acceptance notes](docs/mobile-ui-integration.md).
+Parity target: mobile patch **v1.3.0**, commit
+[`ad1eed5`](https://github.com/SebastianKrog/goa2-mobile-2d-patch/commit/ad1eed5427b91b8daaebb56c4ceafda01db5f7de).
+The original plan used v1.1.3 (`b1ecc66`). This revision accounts for both releases
+since then (v1.2.0 and v1.3.0); it does not claim their features are implemented in
+the native frontend. M0/M1 completion refers to their original foundation/shell scope.
 
 ## Agreed direction
 
@@ -19,6 +24,35 @@ See [integration and acceptance notes](docs/mobile-ui-integration.md).
   data and automated tests; visual/browser acceptance remains pending until an
   asset-equipped environment is available.
 
+## Release reconciliation: v1.1.3 to v1.3.0
+
+The published patch identifies its newest release as v1.3.0 in `package.json`,
+the userscript header, and Git HEAD. No v1.13 release/tag was found. The source
+range reviewed is `b1ecc66..ad1eed5`, with changelog, source, and regression-test
+inspection. The rows below account for every new changelog entry; the owning
+milestones contain the corresponding implementation and acceptance work.
+
+| Release/change | Owning milestones | Required parity at v1.3.0 |
+| --- | --- | --- |
+| 1.2: shared marker area | M3, M9 | Yellow Bounty/green Poison; hero and owned-piece targets; replace Played label only when indicators exist; three indicators compress card text without changing row height. |
+| 1.2: public Gydion counter | M3, M8, M9 | Any viewer can inspect public cast spells; colored pips through nine and numeric fallback; latest emblem treatment supersedes the initial portrait. |
+| 1.2: compact indicators | M3, M9 | One B/P or spell indicator, purple combined indicator count for multiple types; a spell counter contributes one indicator. |
+| 1.2: owner spellbook and spell faces | M3, M4, M9 | Prepared owner spells and public cast spells in Tree/List/Grid; readable landscape faces; count-only opponents stay masked; no mutation of native facedown state. |
+| 1.3: emblem and compact spacing | M3, M9 | Neutral clickable border on Gydion's emblem; replace redundant Deck/Cast counts; indicators follow names and occupy no space when absent. |
+| 1.3: Tiny public spell list | M3, M8, M9 | Flat Rank/Color-sorted list, shorter Large viewer above Board/beside it in landscape, saved Image alternative, and solid rank-IV end accents. |
+| 1.3: sorting/grouping/highlights | M3, M4, M8 | Share Deck sort with spell lists; Cast Spells precedes Spellbook; rank/color subheadings only within Spellbook; inspected spells stay highlighted. |
+| 1.3: embedded spell references | M3, M9 | Unique slim full-width owner spell rows across viewers; choose-one lists become rows; normal rule names and parenthetical text survive; other viewers retain text. |
+| 1.3: nested spell details and casting | M2, M3, M8, M9 | Padded/shadowed details preserve parent dimensions; Back/Close restores parent; Tiny casting choices show the chosen spell in its action preview. |
+| 1.3: inscription choices | M2, M3, M5, M6, M9 | Fixed Bird/Axe/Anvil/Horn columns; acknowledged progress through Undo/reload/Board peek; four visible slots and centered labels at confirmation; no invented midway history. |
+| 1.3: rune indicators/history | M3, M9 | Active rune in compact summaries, named runes above hero turn slots, unchanged board height/current-turn gold glow, and no redundant rune row. |
+| 1.3: focus/setup controls | M2, M7, M9 | Names and status/order controls open focused heroes; starting-position controls sit at the top with Close; selection instructions use the action strip. |
+| 1.3: action/card-choice polish | M3, M9 | Small gold-choice cards, skill/defense icons, no FAST TRAVEL zero placeholder, and removal of redundant red picker framing while retaining clear state/focus cues. |
+
+Use `tests/test-hero-indicators.cjs` and `tests/test-action-choices.cjs` in the
+pinned patch release as scenario references, along with the existing landscape,
+timed-controls, and Board-shortcut regressions. Port behavior into native tests;
+do not port private-fiber/native-button adapter mechanics.
+
 ## Findings from the two projects
 
 The frontend is a React/TypeScript application with an existing SVG 2D board,
@@ -32,6 +66,8 @@ Board/Heroes/Hand/Deck/Log/Settings navigation, compact hero summaries, multiple
 card sizes, text inspection, deck trees and saved plans, staged upgrades, board
 rotation/focus, settings, and local event history. It has extensive synthetic DOM
 regression coverage, including portrait and landscape behavior.
+v1.2/v1.3 also ship shared markers, owner/public spell viewers and embedded spell
+references, Snorri inscription/history presentation, and compact focus/setup controls.
 
 The patch necessarily integrates through generated CSS class fragments, private
 React fibers, DOM observers, native-button proxies, and synthetic camera events.
@@ -84,6 +120,7 @@ src/utils/                 pure card, deck, status, and input transformations
 | Status and clocks | Frontend `utils/gameStatus.ts`, `utils/timeControl.ts`, clock hooks/components | Reuse calculations and synchronization; adapt mobile layout. |
 | Cards | Patch `cards.js`, `card-rows.js`; frontend card stats, text, icons, painter | Port compact/text layouts; consolidate shared calculations and localization. |
 | Heroes | Patch `heroes.js`, `board.js`; frontend hero/status utilities | Port presentation using typed hero data and explicit actions. |
+| Indicators/spells/runes | Patch `hero-indicators.js`, `spells.js`, `rune-choices.js` | Share typed indicator/spell models and native React views; preserve ownership and acknowledged rune progress. |
 | Deck trees | Patch `tree-model.js`, `tree-view.js`, `deck-tree.js` | Reuse suitable pure algorithms after typing; rewrite DOM rendering as React. |
 | Upgrades | Patch `upgrade-tree.js`; frontend `upgradeOffer.ts` | Preserve staging/preview concepts; prefer server-supported batch commit. |
 | Navigation | Patch `navigation.js` | Preserve user behavior; integrate with React Router rather than copying raw history manipulation. |
@@ -101,10 +138,10 @@ part of every milestone; asset-dependent visual acceptance is tracked separately
 | M0 | Shared integration boundary and test baseline | — |
 | M1 | Opt-in mobile shell and navigation | M0 |
 | M2 | Core gameplay through the mobile shell | M1 |
-| M3 | Mobile cards, hero summaries, and decision presentation | M2 |
-| M4 | Deck browsing and saved local plans | M3 |
-| M5 | Backend batch-upgrade contract | M0; independent of M1–M4 |
-| M6 | Staged upgrade tree with one Commit action | M4, M5 |
+| M3 | Mobile cards, hero summaries, indicators, spells/runes, and decisions | M2 |
+| M4 | Deck/spell browsing and saved local plans | M3 |
+| M5 | Batch-upgrade/rune contract and typed frontend adapters | M0; independent of M1–M4 |
+| M6 | Staged upgrade tree and rune batch submission | M4, M5; rune presentation from M3 |
 | M7 | Unified 2D camera with rotation and hero focus | M2 |
 | M8 | Settings, history, and remaining patch parity | M3; final parity review after M6–M7 |
 | M9 | Asset-equipped acceptance and automatic phone activation | M6–M8 and access to assets |
@@ -123,7 +160,8 @@ M9 remains blocked on visual/device access even if all automated checks pass.
   reconnect states. Ideally validate M1–M2 before expanding the presentation so
   incorrect layout assumptions do not spread into later milestones.
 - During M3–M8: focused browser/device checks as features land, especially card
-  readability, deck layout, and real touch gestures.
+  readability, deck/spell layout, nested spell overlays, rune columns, indicator
+  crowding, and real touch gestures.
 - Before completing M9: full device acceptance before automatic phone activation.
 
 Implementation and synthetic tests can proceed without assets. Record missing
@@ -142,6 +180,8 @@ by the mobile shell, with no desktop presentation changes.
   establish the suggested directory structure.
 - [x] Define ownership of session state, decision permissions, presentation state,
   and actions; identify neutral card helpers needed by later milestones.
+- [x] Reconcile the feature/input inventory with patch v1.2.0/v1.3.0, assigning
+  new parity tasks to the milestones below and retaining explicit unimplemented status.
 
 Acceptance: desktop tests retain their baseline results, the shared interface is
 typed, and neither presentation needs to create a second socket/session.
@@ -174,6 +214,10 @@ Acceptance: synthetic interaction tests cover opening, switching, and closing
 panes and Back/Escape. Pane changes recreate neither the socket nor the board.
 Desktop appearance and tests remain stable. Visual layout review is pending.
 
+v1.3 follow-through: M3 adds public cast-spell surfaces using this shell; M8 extends
+its navigation to nested spell inspection. Their absence does not turn the original
+M1 shell checks into proof of v1.3 feature parity.
+
 ## M2 — Core mobile gameplay
 
 Deliverable: opt-in mobile 2D UI with essential gameplay available. Desktop keeps
@@ -194,6 +238,12 @@ or the deck tree.
   states. Keep bug reporting, sharing, and override/vote tools reachable.
 - [ ] Preserve meaningful pane/inspection state on ordinary updates; clear stale
   state on game/viewer changes and invalidate obsolete decisions.
+- [ ] Move contextual starting-position controls to the top, with Close/Done and
+  Back synchronized to the actual adjustment state. Put selection instructions in
+  the action strip, preserving Undo/Skip, Board peek, and viewport/keyboard bounds.
+- [ ] Exercise Gydion spell selection then spell-action confirmation, and Snorri
+  inscription then final confirmation. Inspection must not cast/place anything.
+  Keep valid single-choice flows operational before the M5/M6 batch adapter lands.
 
 Acceptance: synthetic tests can exercise core play through the mobile shell,
 including upgrade choices through the existing one-at-a-time flow. Pane changes
@@ -218,11 +268,55 @@ mobile reading and decision flows.
   only their supplied views; never fill masked cards from a global catalog.
 - [ ] Adapt action/defense/card-choice surfaces for touch. Keep simple generic
   controls as a fallback for unfamiliar request shapes.
+- [ ] Add the shared hero/piece-aware indicator model: Bounty in yellow, Poison
+  in green, Gydion's public cast-spell counter, and Snorri's active rune in compact
+  rows. Resolve markers on owned pieces back to their hero and remove stale markers.
+- [ ] Replace Played with indicators only when present; at three or more indicators
+  shorten the current-card name area without changing row height. Compact markers
+  follow the name with no empty reservation; use B/P circles or the spell count for
+  one indicator and a purple combined count for multiple indicator types.
+- [ ] Render Gydion's emblem with a neutral clickable border and spell-colored dice
+  pips for 1–9 cast spells, numeric zero/above-nine fallback, and a compact numeric
+  variant. Replace redundant Deck/Cast counters. Open the public cast list for every
+  viewer; a spell counter counts as one indicator regardless of its spell total.
+- [ ] Provide the public cast-spell browser: flat Tiny rows sorted by Rank/Color,
+  inspected-row highlighting, and a shorter Large viewer above Board in portrait
+  or beside it in landscape. Share sorting with Deck; Image remains a Settings choice.
+- [ ] Reuse spell-specific Tiny/Large/Image renderers for public and owner views.
+  Show printed spell values without hero-item bonuses (owner may differ from caster),
+  omit initiative/empty stat rails/item slots, preserve range/radius/printed notation,
+  label Cantrips and ranks correctly, and give rank IV solid end accents. Keep
+  readable name/rules fallbacks when images are missing.
+- [ ] Embed each known spell once as a slim full-width Tiny row in the owner's card
+  descriptions across Hand, Heroes/focus, Deck, and decision viewers. Replace
+  choose-one lists; retain spell names in ordinary rules, other clauses, and
+  parenthetical notes (rows precede notes). Other viewers retain ordinary text.
+  Resolve only supplied known spell data; keep source text/card state unchanged.
+- [ ] Open embedded spell details in a padded, shadowed overlay without resizing
+  the parent card. Preserve parent inspection identity, focus, and scroll while
+  data updates; M8 supplies layered Back/Close behavior.
+- [ ] Use Tiny spell-cast choices for `SELECT_CARD`/`SELECT_OPTION`; after selection,
+  display the actual chosen spell in the next action preview. Use Small catalog
+  cards for gold-card choices, skill/defense icons for action labels, and no FAST
+  TRAVEL zero placeholder. Remove redundant red picker framing without losing
+  disabled, selected, pending, focus, or rollback cues.
+- [ ] Port Snorri's fixed Bird/Axe/Anvil/Horn option columns and four turn slots.
+  Reconcile acknowledged choices through Undo, reload, and Board peek; prefer
+  server `next_slot`/offered IDs over prompt-text inference. Scope saved progress
+  by game/viewer/hero/round/turn, discard invalidated future slots, and never guess
+  earlier order when joining midway. Show all four runes, including the automatic
+  last rune, at confirmation with centered turn labels.
+- [ ] Show the active rune only in compact indicators and named runes above the
+  matching hero history slots, including empty card slots. Preserve the current
+  turn's gold glow and row height; do not duplicate the old native rune row.
 - [ ] Add keyboard/focus behavior, dialog semantics, reduced-motion support,
   readable long text, and touch targets alongside visual presentation.
 
 Acceptance: card selection and inspection remain distinct; displayed values match
 shared calculations; unrelated updates retain valid selection and scroll/focus.
+Cover owner/opponent/spectator spell access, counter/marker combinations, nested
+spell inspection, rune confirmation/recovery, and gold/spell/action choice variants
+from the v1.3 source regressions.
 
 ## M4 — Deck browsing and local planning
 
@@ -236,19 +330,29 @@ Deliverable: a read-only deck browser with persistent hypothetical build plans.
   Scope plans by game, viewer/hero, and catalog identity as appropriate.
 - [ ] Preserve recovery from unavailable/corrupt storage and changing game state.
 - [ ] Reuse the same tree/card primitives for the later upgrade picker.
+- [ ] Include the owning Gydion player's prepared Spellbook and public Cast Spells
+  in every Tree/List/Grid layout. Put Cast Spells before Spellbook; only Spellbook
+  gets rank/color subheadings. Share Deck Rank/Color sorting with the public list,
+  keep inspected-spell highlighting through sorting/live updates, and never sort
+  authoritative arrays in place or flip live prepared cards face up.
+- [ ] Keep spell browsing outside upgrade-tree eligibility and hypothetical item
+  totals. Count-only opponent spellbooks must never acquire fabricated card rows;
+  public cast-spell inspection remains available independently of owning a Deck.
 
 Acceptance: browsing and planning work against synthetic catalogs without assets;
 changing views or revisiting a game does not silently submit or lose valid plans.
 
-## M5 — Backend batch-upgrade contract
+## M5 — Batch-upgrade/rune contract and frontend adapters
 
-Deliverable: a documented, tested batch-upgrade API usable by either frontend
-layout. This milestone can be completed before the mobile deck tree.
+Deliverable: documented, tested batch-upgrade/rune APIs and typed frontend adapters
+usable by either layout. This milestone can be completed before the mobile deck tree.
 
-Preferred approach: add a backward-compatible batch submission contract rather
-than reproduce the userscript's client-side chain of native confirmations.
-Design the precise payload after inspecting the existing upgrade engine/session,
-REST/WebSocket validation, replay, and persistence paths.
+Backend functional support is available on `feat/batch-upgrades-and-runes` at
+[`740ec5b`](https://github.com/SebastianKrog/goa2-backend/commit/740ec5b)
+(including `b412c02`); this is not a claim that it is merged or deployed. The review
+verified old single choices, ordered batches, whole-batch rejection, and request
+preservation. M5 remains open for frontend adapters and durable lifecycle regressions.
+Use that documented contract rather than reproducing the userscript's confirmation chain.
 
 - [ ] Define an ordered list of upgrade selections for one authenticated hero.
   Keep existing single-upgrade submissions valid for older clients.
@@ -269,12 +373,24 @@ REST/WebSocket validation, replay, and persistence paths.
 - [ ] Update backend `docs/CLIENT_INTEGRATION_GUIDE.md` and frontend types/clients.
   Add engine and REST/WebSocket tests for valid, invalid, stale, concurrent, and
   repeated submissions, plus persistence/replay behavior.
+- [ ] Reflect the available contract in frontend selection types and controller,
+  WebSocket, and REST adapters: `{hero_id, card_ids: string[]}` for upgrades and an
+  ordered rune-ID array for inscription, alongside existing single payloads.
+- [ ] Type and consume `supports_batch`, per-hero upgrade `selection_counts`, and
+  rune `next_slot`, `max_selections`, and `selection_counts`. Upgrades accept one
+  or all remaining choices. Runes accept one or a completing sequence (including
+  leaving the automatically placed final rune); reject intermediate subsets.
+- [ ] Preserve invalid requests/clock allowances and prior acknowledged progress;
+  on stale/uncertain delivery fetch the latest scoped view before resubmitting.
+  Add permanent regressions for the reviewed replay, serialized-resume, duplicate,
+  and cross-player stale-request recovery probes. Keep backend verification results
+  separate from frontend completion and actual backend deployment.
 Acceptance: engine/API tests demonstrate atomic valid batches, rejection without
 partial spending, safe retry/reconnect behavior, and preserved replay/persistence.
 The existing desktop single-upgrade flow continues working. Frontend types and
 clients can submit a batch, but the staged mobile UI belongs to M6.
 
-## M6 — Staged mobile upgrade tree
+## M6 — Staged mobile upgrade tree and rune batches
 
 Deliverable: complete upgrade staging with a single explicit Commit action,
 sharing M4's tree and card primitives and using M5's server contract.
@@ -284,6 +400,13 @@ sharing M4's tree and card primitives and using M5's server contract.
 - [ ] On failure/reconnect, reconcile with authoritative state before retrying.
   If the server lacks batch support, retain explicit single-upgrade confirmation;
   avoid an invisible automatic submission chain.
+- [ ] Wire Snorri's M3 four-slot arrangement to batch submission only when the
+  current prompt advertises support. Keep local staging distinct from acknowledged
+  placements, require explicit confirmation of a complete allowed arrangement,
+  and show the resulting four-rune layout. Older servers retain sequential choices.
+- [ ] Reconcile rune staging after Undo, stale requests, reload, and Board peek
+  using current offered IDs/slot metadata. Never silently replay a partially or
+  uncertainly accepted batch, and clear stale game/viewer/turn-owned staging.
 
 Acceptance: one Commit applies a complete valid batch, or reports a failure without
 partially spending it. Desktop's existing single-upgrade flow continues working.
@@ -297,6 +420,9 @@ behavior through native commands.
   and reserved-pane-aware centering. Use direct commands and one transform model.
 - [ ] Test pan/pinch/rotation composition, pointer cancellation, orientation
   changes, and click suppression after a gesture. Preserve board target selection.
+- [ ] Open a focused Board hero from compact name and status/order controls,
+  with Enter/Space support and independent marker/spell buttons. Keep focus
+  inspection separate from the existing portrait/double-tap camera-centering action.
 Acceptance: automated geometry/interaction checks cover transform composition,
 reset, focus on hero pieces, cancellation, and selection after gestures. Real
 two-finger behavior and viewport fit remain pending device checks in M9.
@@ -317,6 +443,13 @@ features, including any intentionally deferred items.
 - [ ] Treat backfilling missed events as a separate optional backend feature with
   player-scoped history and cursor/delta semantics; it is not required for core play.
 - [ ] Review the released patch feature matrix and document remaining omissions.
+- [ ] Persist the spell viewer's Large/Image preference (shorter Large by default),
+  and reconcile Rank/Color sort with Deck. Migrate/validate useful patch preferences
+  without sharing local appearance state with Deck upgrade plans or rune progress.
+- [ ] Extend the navigation model to public cast list → spell details and parent
+  card → embedded spell details. Back/Close/Escape unwinds one layer, restores
+  parent focus/scroll, and never chooses, casts, undoes, or leaves the game.
+  Clear nested surfaces safely on game/viewer/layout changes and removed source cards.
 
 Acceptance: preferences persist and update live, history handles reconnect/rewind
 and storage failure, and every released patch feature is implemented or recorded
@@ -338,6 +471,22 @@ explicit manual override. This milestone requires an asset-equipped environment.
 - [ ] Leave visual/device acceptance explicitly pending: portrait/landscape,
   narrow/short screens, large rosters, long/localized text, safe areas, browser
   chrome/keyboard, real gestures, fonts/artwork/canvas, fullscreen, and sound.
+- [ ] Port v1.2/v1.3 indicator/action-choice scenarios into native regressions:
+  hero/piece marker removal, 0/1–9/>9 spell counters, three-indicator compression,
+  compact combined counts/no empty gaps, every viewer's public cast list, and
+  owner-only prepared/embedded spell data without mutating facedown cards.
+- [ ] Cover Tiny/Large/Image spell display, Cantrip/rank-IV cases, printed values
+  without caster/owner item confusion, shared sorting/highlights, empty lists,
+  missing images, nested parent-size/focus/scroll restoration, and localized rules
+  retaining choose-one versus ordinary/parenthetical semantics.
+- [ ] Cover fixed rune columns, mid-inscription joins without guessed history,
+  acknowledged progress through Undo/reload/peek, automatic final rune/confirmation,
+  active/history-slot indicators, stale batch recovery, starting-position Close/Done,
+  status-control keyboard focus, Small gold choices, and skill/FAST TRAVEL labels.
+- [ ] With assets, check these surfaces in portrait and short landscape alongside
+  the pre-existing Emmitt/timed-navigation regressions. Verify nested shadow/padding,
+  unchanging parent/board dimensions, long spell rules, crowded markers, and rune
+  confirmation clipping. Synthetic declaration checks are not visual acceptance.
 - [ ] After asset-equipped validation, introduce automatic phone activation with
   an explicit manual override. Test coarse-pointer landscape and hybrid devices;
   viewport width alone should not permanently determine user preference.
@@ -354,6 +503,9 @@ This is follow-up work, not a requirement for completing the mobile port.
   as separate changes. Let demonstrated reuse drive convergence.
 - [ ] Revisit responsive shells and shared styling after both layouts have concrete
   requirements. Preserve distinct 2D/3D rendering needs.
+- [ ] Include the reusable spell row/viewer, indicator model, rune arrangement,
+  and gold/spell/action choice primitives in the later desktop adoption review;
+  their mobile integration does not itself authorize a desktop restyle.
 
 Acceptance: each adopted component has desktop-specific verification and a clear
 maintenance or usability benefit. No wholesale desktop redesign is implied.
@@ -362,7 +514,12 @@ maintenance or usability benefit. No wholesale desktop redesign is implied.
 
 - Tablet-specific split panels and alternative navigation modes from the patch
   roadmap.
-- New hero-specific indicator designs, including the proposed Gydion spell counter.
+- Future hero-specific designs beyond the shipped v1.3 indicators. Gydion's counter,
+  prepared/public spell viewers, and Snorri's released inscription/history UI are
+  now porting scope in M3/M4/M6/M8, not deferred designs.
+- Additional Snorri presentation beyond v1.3 remains unspecified: the patch's
+  ROADMAP still has a generic Snorri follow-up despite its shipped rune UI. Use
+  released source/tests as the parity target rather than deferring those features.
 - Redesigning desktop or adapting the 3D tabletop to the mobile shell.
 - Complete server event-history retrieval unless prioritized independently.
 - A single universal CSS/layout implementation before mobile behavior is validated.
@@ -379,5 +536,6 @@ maintenance or usability benefit. No wholesale desktop redesign is implied.
 | Stale inspection, history, or private data after navigation | Clear ownership boundaries and game/viewer-scoped state/storage. |
 | False confidence from DOM tests | Separate automated behavior acceptance from deferred visual/device acceptance. |
 
-Start implementation with M0. Review each milestone independently, with a broader
-review after M2 establishes core play.
+Continue with M2 after the completed M0/M1 foundation. Review each milestone
+independently, with a broader review after M2 establishes core play. The release
+reconciliation table is a parity inventory; unchecked implementation tasks remain work.
